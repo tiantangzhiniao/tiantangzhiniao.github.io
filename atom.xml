@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title><![CDATA[Leo's blog]]></title>
-  <subtitle><![CDATA[Never too old to learn]]></subtitle>
+  <subtitle><![CDATA[活到老，学到老：Never too old to learn]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
   <updated>2015-05-08T07:46:15.239Z</updated>
