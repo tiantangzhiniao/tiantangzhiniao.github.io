@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>My first blog | Leo&#39;s blog</title>
+    <title>Android入门 | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="之前由于在新浪上开始写博客，写博客是因为之前经常看到一些大牛的博客，让我受益匪浅，就跟读文学类的书籍一样，带领你走进另一个你未曾经历过的世界，也许这就是我为什么现在特别喜欢看小说的原因吧，而且当你学会分享和教别人的时候，说明你已经差不多掌握了这个技术。后来经过Gavin 的建议让我用github来搭">
+    <meta name="description" content="时间好快，转眼来南瑞实习已经两个多月了，过上了每天上班的生活，偶尔有时会加班，但是每天的生活觉得还是很充实的，虽然平淡，但是每天都能有所收获即使只是那么一点点。为了讲述Android的完整性，我把上次在新浪写的弄过来，这也是受到一些大牛的启发，我要坚持写下去，记录下我学习过程中的收获，遇到的问题包括">
     
     
     
@@ -67,15 +67,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/07/my_first_blog/" title="My first blog" itemprop="url">My first blog</a>
+      <a href="/2015/05/08/rumen/" title="Android入门" itemprop="url">Android入门</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-05-07T14:16:33.000Z" itemprop="datePublished">2015-05-07</time>
-    更新日期:<time datetime="2015-05-08T07:50:39.251Z" itemprop="dateModified">2015-05-08</time>
+    <time datetime="2015-05-08T07:12:59.000Z" itemprop="datePublished">2015-05-08</time>
+    更新日期:<time datetime="2015-05-08T07:46:15.239Z" itemprop="dateModified">2015-05-08</time>
     
   </p>
 </header>
@@ -87,48 +87,37 @@
 		
 		</div>
 		
-		<p>之前由于在新浪上开始写博客，写博客是因为之前经常看到一些大牛的博客，让我受益匪浅，就跟读文学类的书籍一样，带领你走进另一个你未曾经历过的世界，也许这就是我为什么现在特别喜欢看小说的原因吧，而且当你学会分享和教别人的时候，说明你已经差不多掌握了这个技术。后来经过Gavin 的建议让我用github来搭博客，主要是自己的博客，没有任何广告，看的也很舒服。经过努力，今天终于把博客建好了。今天就用我的在github上的第一篇博客来记录一下我的建博客的经历和遇到的问题的解决方案（更为详细的步骤大家还是参考原文吧<a href="http://linjiangxian998.com/" target="_blank" rel="external">linjiangxian</a>和<a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">zipperary</a>），以及我最近学习的情况，还有强烈推荐大家学习一下Markdown语言，棒棒哒的<strong>优点</strong>：</p>
+		<p>时间好快，转眼来南瑞实习已经两个多月了，过上了每天上班的生活，偶尔有时会加班，但是每天的生活觉得还是很充实的，虽然平淡，但是每天都能有所收获即使只是那么一点点。为了讲述Android的完整性，我把上次在新浪写的弄过来，这也是受到一些大牛的启发，我要坚持写下去，记录下我学习过程中的收获，遇到的问题包括编程过程中遇到的错误，调试的过程等，以及一些感悟，希望通过这样总结平时的学习，记录下学习生活中的点点滴滴。<br>今天就讲讲Android的入门吧。</p>
 <ul>
-<li>纯文本，所以兼容性极强，可以用所有文本编辑器打开。</li>
-<li>让你专注于文字而不是排版。</li>
-<li>格式转换方便，Markdown 的文本你可以轻松转换为 html、电子书等。</li>
-<li>Markdown 的标记语法有极好的可读性<br>建博客的的步骤分为：</li>
+<li>首先就是搭建开发环境，这个任何一本书都有介绍，去Android官网下一个SDK工具包，地址：<a href="http://developer.android.com/sdk/" target="_blank" rel="external">http://developer.android.com/sdk/</a>。然后安装一下，还要配置一下JDK，很简单就不多赘述。说一下我主要参考的书就是《疯狂Android讲义》，也可以参考《第一行代码》，其实最主要的还是要会运用Android的API文档，其实学习任何技术都是一样的，一定要学会查文档，因为有好多方法和属性是根本记不住的，所以我学习的时候，把每个方法都浏览一遍（一般Android的方法根据名称就能知道它的用途），然后编程的时候根据需求用到的时候去查API文档或者参考书寻找对应的方法和属性，或者百度。其实编程编多了好像也就是那么回事，最近网上不是流传着编程的步骤：<blockquote>
+<p>1)    打开Google。<br>2)    输入stackoverflow，进行搜索。<br>3)    进入网站，搜索需求的代码，copy到本地进行调试，改错等。<br>4)    调试不成功，接着重复2到4步骤，重新搜索。<br>5)    有没有搜不到的情况，答：不可能。</p>
+</blockquote>
+</li>
 </ul>
-<ol>
-<li>在<a href="https://github.com/" target="_blank" rel="external">github</a>在注册一个账号，然后创建一个repository。（github是世界上最大的代码托管网站。我的理解是和网盘差不多，只不过上面存放的都是代码。国内有类似的常用的网站是gitcafe）。</li>
-<li>安装Node.js（hexo是一款基于Node.js的博客框架，所以要先安装Node.js环境），安装完之后请重启电脑一次。</li>
-<li>安装mygit，我们将在这个软件输入一些命令进行操作（安装完成后，在空白处右击鼠标选择Git Bash蹦出一个类似命令行窗口的东西，就说明Git安装成功）</li>
-<li>创建hexo文件夹，在你喜爱的文件夹下（如E:\hexo），在E:\hexo（你自己的文件可能跟我不一样）内点击鼠标右键，选择Git bash，执行以下指令。Hexo会自动在目标文件夹建立网站所需要的所有文件:<br><pre><code>hexo init </code></pre><br><strong>安装依赖包</strong><br><pre><code>npm install </code></pre><br><strong>执行以下命令(如E:\hexo)</strong><br><pre><code>1 hexo g<br>2 hexo s<br></code></pre><br>g即是generate，可以写整个单词generate，也可以只写g。s也是同理，即是server。以上两步就建起了本地博客，按照提示可以在浏览器中输入<a href="http://localhost:4000查看" target="_blank" rel="external">http://localhost:4000查看</a></li>
-<li>部署博客到github上，用文本编辑器打开_config.yml(如E:\hexo下)。你在部署时，要把下面的tiantangzhiniao都换成你的账号名<br><pre><code>deploy:<br>type: git<br>repo: <a href="https://github.com/tiantangzhiniao/tiantangzhiniao.github.io.git" target="_blank" rel="external">https://github.com/tiantangzhiniao/tiantangzhiniao.github.io.git</a><br>branch: master<br></code></pre><br>然后hexo g和hexo d，接着输入账号和密码即可完成部署</li>
-<li>优化主题和插件（可以看<a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">zipperary</a>，写的很详细）</li>
-</ol>
-<p>这里我主要说一下我在搭建过程的遇到的问题</p>
-<ol>
-<li>首先每次改_config.yml中的属性时都要加一个空格（就因为这个错误，我在部署的时候一直报错，导致我检查中英文标点和大小写弄了半天），而且在用Markdown标签时也不要忘了加一个空格。</li>
-<li>初次搭建时确实可能遇到各种问题，也可能感觉很困难，但是当你搭建成功后会发现原来也很简单嘛。</li>
-<li>优化和美观确实比较繁琐，大家可以用一些现成的主题就方便多了，一般的插件都是在widgets下配的。</li>
-<li>出现乱码的，不要使用 windows 中的「记事本」打开并编辑文件，推荐使用 sublime text，很简单。如果已经在「记事本」中编辑过，需要使用 sublime text 转码为「utf8」。<br>我讲的很粗略，大家可以去我推荐那个看看，最近我会把我又学习的Android的东西分享一下，学习Android的过程中也逐渐明白了智能手机的一些原理，感觉很好玩！<br>最后非常感谢Gavin 和linjiangxian让我最后顺利的搭建成功。今晚和师父聊了一个多小时，终于把论文题目定下来，真的好感谢师父（虽然他看不到），让我知道了好多，还了解了南瑞的一些情况。</li>
-</ol>
+<p>虽然是个段子，但是stackoverflow确实很强大，你有什么错误可以在上面找。<br>环境搭好后，需要你建一个虚拟机（就是一个虚拟手机，可以在上面运行你的程序），也很简单，可以参考书上说明或者百度。建好后运行虚拟机就跟真的手机一样<br><img src="/picture/jiemian.jpg" alt=""></p>
+<ul>
+<li>建立项目<br>一般所有的书上都会介绍建立helloworld这个第一个Android项目，这里根据书上的介绍一步一步建立就好了，我想分享一下Android的项目结构，其实它也是典型的MVC结构，类似于JavaWeb运用SSH的结构，目的为了降低耦合性。<br><img src="/picture/ziyuan.jpg" alt=""><br>这就是一个项目中的所有文件，src中放的是Java代码，就是后台控制的内容。Gen目录下的文件是自动生成的，你不用去管它也不要去修改它。Assets和bin不需要关注。Libs下放的是第三方jar包。Res是比较重要的，内容有比较多，前面的gen目录下的R.java也是根据这个目录下的文件自动生成的。以我的理解，大家把图片都放在图片放在 drawable-hdpi 目录下，布局放在 layout 目录下，字符串和其他的XML布局放在 values 目录下。AndroidManifest.xml也是经常用到的文件，涉及到的内容我也没学到呢，等学到了再说吧。project.properties这个文件非常地简单，就是通过一行代码指定了编译程序时所使用的 SDK 版本。<br>还有就是在编程的过程中一定要学会用自动提示功能，这样能避免很多错误，因为根据自动提示会自动把一些用到的包导进去和大小写问题也会自动解决。<br>最后分享一些网址：<br>这个是卡耐基梅隆大学计算机学院语言技术系的资源大全：包括大量的NLP开源软件工具包，基础数据集，论文集，数据挖掘教程，机器学习资源：<a href="http://islpc21.is.cs.cmu.edu:3000/lti_catalogue。" target="_blank" rel="external">http://islpc21.is.cs.cmu.edu:3000/lti_catalogue。</a><br>由于在国企，Google等外国网站很困难（国企对于信息安全要求太严格了），导致上Google搜索问题出现困难，就用了google 镜像网站：repigu.com或者nan.so</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/建博客/">建博客</a>
+  <span></span> <a href="/tags/Android/">Android</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/建博客/">建博客</a>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/05/07/my_first_blog/" data-title="My first blog | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/05/08/rumen/" data-title="Android入门 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -137,14 +126,14 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/08/rumen/" title="Android入门">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Android入门</span>
+
+<div class="next">
+<a href="/2015/05/07/my_first_blog/"  title="My first blog">
+ <strong>NEXT:</strong><br/> 
+ <span>My first blog
+</span>
 </a>
 </div>
-
 
 </nav>
 
