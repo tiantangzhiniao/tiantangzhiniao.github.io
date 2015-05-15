@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2015/05/15/shijian/</loc>
+    <lastmod>2015-05-15T09:24:00.317Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2015/05/12/activity/</loc>
     <lastmod>2015-05-12T08:54:11.235Z</lastmod>
   </url>

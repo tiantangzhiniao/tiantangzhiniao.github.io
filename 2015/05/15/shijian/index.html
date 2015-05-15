@@ -4,12 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Android入门 | Leo&#39;s blog</title>
+    <title>Android之事件和intent | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="时间好快，转眼来南瑞实习已经两个多月了，过上了每天上班的生活，偶尔有时会加班，但是每天的生活觉得还是很充实的，虽然平淡，但是每天都能有所收获即使只是那么一点点。为了讲述Android的完整性，我把上次在新浪写的弄过来，这也是受到一些大牛的启发，我要坚持写下去，记录下我学习过程中的收获，遇到的问题包括">
+    <meta name="description" content="在Android中与界面编程息息相关的就是事件处理了，当用户在程序界面上执行各种操作时，应用程序必须为用户动作提供响应动作。Android提供了两种方式的事件处理：基于监听的事件处理和基于回调的事件处理基于监听的事件处理模型编程步骤：
+
+获取界面组件（事件源），即被监听的对象，任何组件都可以。
+实现">
     
     
     
@@ -69,15 +72,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/08/rumen/" title="Android入门" itemprop="url">Android入门</a>
+      <a href="/2015/05/15/shijian/" title="Android之事件和intent" itemprop="url">Android之事件和intent</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-05-08T07:12:59.000Z" itemprop="datePublished">2015-05-08</time>
-    更新日期:<time datetime="2015-05-08T07:46:15.239Z" itemprop="dateModified">2015-05-08</time>
+    <time datetime="2015-05-15T09:20:11.000Z" itemprop="datePublished">2015-05-15</time>
+    更新日期:<time datetime="2015-05-15T09:24:00.317Z" itemprop="dateModified">2015-05-15</time>
     
   </p>
 </header>
@@ -89,17 +92,18 @@
 		
 		</div>
 		
-		<p>时间好快，转眼来南瑞实习已经两个多月了，过上了每天上班的生活，偶尔有时会加班，但是每天的生活觉得还是很充实的，虽然平淡，但是每天都能有所收获即使只是那么一点点。为了讲述Android的完整性，我把上次在新浪写的弄过来，这也是受到一些大牛的启发，我要坚持写下去，记录下我学习过程中的收获，遇到的问题包括编程过程中遇到的错误，调试的过程等，以及一些感悟，希望通过这样总结平时的学习，记录下学习生活中的点点滴滴。<br>今天就讲讲Android的入门吧。</p>
+		<p>在Android中与界面编程息息相关的就是事件处理了，当用户在程序界面上执行各种操作时，应用程序必须为用户动作提供响应动作。Android提供了两种方式的事件处理：基于监听的事件处理和基于回调的事件处理<br>基于监听的事件处理模型编程步骤：</p>
 <ul>
-<li>首先就是搭建开发环境，这个任何一本书都有介绍，去Android官网下一个SDK工具包，地址：<a href="http://developer.android.com/sdk/" target="_blank" rel="external">http://developer.android.com/sdk/</a>。然后安装一下，还要配置一下JDK，很简单就不多赘述。说一下我主要参考的书就是《疯狂Android讲义》，也可以参考《第一行代码》，其实最主要的还是要会运用Android的API文档，其实学习任何技术都是一样的，一定要学会查文档，因为有好多方法和属性是根本记不住的，所以我学习的时候，把每个方法都浏览一遍（一般Android的方法根据名称就能知道它的用途），然后编程的时候根据需求用到的时候去查API文档或者参考书寻找对应的方法和属性，或者百度。其实编程编多了好像也就是那么回事，最近网上不是流传着编程的步骤：<blockquote>
-<p>1)    打开Google。<br>2)    输入stackoverflow，进行搜索。<br>3)    进入网站，搜索需求的代码，copy到本地进行调试，改错等。<br>4)    调试不成功，接着重复2到4步骤，重新搜索。<br>5)    有没有搜不到的情况，答：不可能。</p>
-</blockquote>
-</li>
+<li>获取界面组件（事件源），即被监听的对象，任何组件都可以。</li>
+<li>实现监听器类，即一个特殊的Java类，必须实现XxxListener接口，事件编程的关键。</li>
+<li>调用事件源的setXxxListener方法将事件监听器对象注册给组件（事件源），一般调用setXxxListener（XxxListener）方法即可。</li>
 </ul>
-<p>虽然是个段子，但是stackoverflow确实很强大，你有什么错误可以在上面找。<br>环境搭好后，需要你建一个虚拟机（就是一个虚拟手机，可以在上面运行你的程序），也很简单，可以参考书上说明或者百度。建好后运行虚拟机就跟真的手机一样<br><img src="/picture/jiemian.jpg" alt=""></p>
-<ul>
-<li>建立项目<br>一般所有的书上都会介绍建立helloworld这个第一个Android项目，这里根据书上的介绍一步一步建立就好了，我想分享一下Android的项目结构，其实它也是典型的MVC结构，类似于JavaWeb运用SSH的结构，目的为了降低耦合性。<br><img src="/picture/ziyuan.jpg" alt=""><br>这就是一个项目中的所有文件，src中放的是Java代码，就是后台控制的内容。Gen目录下的文件是自动生成的，你不用去管它也不要去修改它。Assets和bin不需要关注。Libs下放的是第三方jar包。Res是比较重要的，内容有比较多，前面的gen目录下的R.java也是根据这个目录下的文件自动生成的。以我的理解，大家把图片都放在图片放在 drawable-hdpi 目录下，布局放在 layout 目录下，字符串和其他的XML布局放在 values 目录下。AndroidManifest.xml也是经常用到的文件，涉及到的内容我也没学到呢，等学到了再说吧。project.properties这个文件非常地简单，就是通过一行代码指定了编译程序时所使用的 SDK 版本。<br>还有就是在编程的过程中一定要学会用自动提示功能，这样能避免很多错误，因为根据自动提示会自动把一些用到的包导进去和大小写问题也会自动解决。<br>最后分享一些网址：<br>这个是卡耐基梅隆大学计算机学院语言技术系的资源大全：包括大量的NLP开源软件工具包，基础数据集，论文集，数据挖掘教程，机器学习资源：<a href="http://islpc21.is.cs.cmu.edu:3000/lti_catalogue。" target="_blank" rel="external">http://islpc21.is.cs.cmu.edu:3000/lti_catalogue。</a><br>由于在国企，Google等外国网站很困难（国企对于信息安全要求太严格了），导致上Google搜索问题出现困难，就用了google 镜像网站：repigu.com或者nan.so</li>
-</ul>
+<p>而基于回调的事件处理，关于回调机制我在上一篇微博中已经讲了，简单的说就是在组件的属性中直接定义事件，这也是现在Android经常用到的。</p>
+<ol>
+<li>Handle、Looper与MessageQueue之间的关系及工作原理<br>Android中不允许在子线程中更新界面组件，要在子线程中更新界面组件，需要用Handle对象实现。因为要让handle正常工作，当前线程中必须有一个Looper对象，所以使用handle步骤是：调用Looper的prepare()方法为当前线程创建Looper对象，创建Looper对象时，它的构造器会创建与之配套的MessageQueue；然后创建handle子类的实例，重写handleMessage()方法，该方法负责处理来自其他线程的消息。最后调用Looper的Loop()方法启动Looper。<br>在Android中UI线程主要负责处理用户的按键事件、用户触屏事件及屏幕绘图事件等，因此其他操作不能阻塞UI线程，否则UI界面会停止响应—这样用户感觉会非常糟糕，所以一定牢记：千万不要在UI线程中执行一些耗时的操作</li>
+<li>Intent简介<br>Intent通过指定action属性（其实就是一个普通的字符串），实现把该intent与具体的activity分离，从而提供高层次的解耦（低耦合）。当Android应用不管是启动activity，还是启动service、BroadcastReceiver组件时，Android系统都是由intent来实现的。简单的说，Android使用intent封装了应用程序的“启动意图”，这种“意图”并未直接与任何程序组件耦合。而intent的属性都是通过在 <intent-filter...>属性进行配置的。</intent-filter...></li>
+</ol>
+<p>最后和大家分享一个比较酷炫的东西和一个小技术，在朋友圈里，经常见到一些html5海报，浏览者通过手指的滑动实现页面的切换效果，由于该效果和ppt演示十分相似，也有人称之为html5PPT。而制作这个大家可以看看这个<a href="http://chuansong.me/n/674095" target="_blank" rel="external">http://chuansong.me/n/674095</a>，做出来的效果真是棒棒哒。<br>如何将MySQL中的数据导出为xls格式的：<br>select *from 数据库.表名（world.question_attribute_value） into outfile ‘d:test.xls’;<br>这个时候xls文件是utf-8编码的，用excel打开，会出现乱码。把test.xls以文本方式打开，然后另存为，在编码选择ANSI编码，保存。ok，再用excel打开，乱码问题，烟消云散。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -119,7 +123,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/05/08/rumen/" data-title="Android入门 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/05/15/shijian/" data-title="Android之事件和intent | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -128,19 +132,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/12/activity/" title="深入理解activity">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  深入理解activity</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/07/my_first_blog/"  title="My first blog">
+<a href="/2015/05/12/activity/"  title="深入理解activity">
  <strong>NEXT:</strong><br/> 
- <span>My first blog
+ <span>深入理解activity
 </span>
 </a>
 </div>
