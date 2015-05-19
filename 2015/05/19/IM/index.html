@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>深入理解activity | Leo&#39;s blog</title>
+    <title>即时通讯——Openfire + Spark | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="activity是Android应用的重要的组成单元之一（另外三个是service、broadcastreceive和contentprovider），也是Android应用最常见的组件之一，而对它的生命周期的深刻了解对于Android开发十分重要。首先得说一下Android的回调机制：当开发者需要">
+    <meta name="description" content="即时通讯( Instant Messaging，IM)通常被叫做IM，是两个人通过网络实时地进行同步交流的软件，也是目前国内外互联网用户使用率最高的网络软件。而我毕业设计就是和IM相关的，今天和大家分享一下openfire和spark这2个IM系统的基础软件。Openfire 是遵从GPL 协议的开">
     
     
     
@@ -69,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/12/activity/" title="深入理解activity" itemprop="url">深入理解activity</a>
+      <a href="/2015/05/19/IM/" title="即时通讯——Openfire + Spark" itemprop="url">即时通讯——Openfire + Spark</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-05-12T08:40:06.000Z" itemprop="datePublished">2015-05-12</time>
-    更新日期:<time datetime="2015-05-12T08:54:11.235Z" itemprop="dateModified">2015-05-12</time>
+    <time datetime="2015-05-19T11:18:35.000Z" itemprop="datePublished">2015-05-19</time>
+    更新日期:<time datetime="2015-05-19T11:27:15.329Z" itemprop="dateModified">2015-05-19</time>
     
   </p>
 </header>
@@ -89,34 +89,10 @@
 		
 		</div>
 		
-		<p>activity是Android应用的重要的组成单元之一（另外三个是service、broadcastreceive和contentprovider），也是Android应用最常见的组件之一，而对它的生命周期的深刻了解对于Android开发十分重要。<br>首先得说一下Android的回调机制：当开发者需要该组件能响应特定的事件，可以选择性地实现该组件的特定方法，即当用户在该组件上激发某个事件时，该组件上特定的方法就会回调（通俗的讲就是实现某个功能就会调用给功能对应的方法叫回调）。Activity运行过程中所处的不同状态称为生命周期，在不同的状态会回调不同的方法。<br>每个活动在其生命周期中最多可能会有四种状态。</p>
+		<p>即时通讯( Instant Messaging，IM)通常被叫做IM，是两个人通过网络实时地进行同步交流的软件，也是目前国内外互联网用户使用率最高的网络软件。而我毕业设计就是和IM相关的，今天和大家分享一下openfire和spark这2个IM系统的基础软件。<br>Openfire 是遵从GPL 协议的开源软件，是用Java开发的实时协作服务器。它采用了开源的 XMPP 协议来开发即时通讯服务器。由于是采用开放的 XMPP 协议，可以使用各种支持 XMPP 协议的 IM 客户端软件登录服务。可以使用它轻易地构建高效率的即时通讯服务器。Openfire 安装和使用都非常简单，并利用Web进行管理，单台服务器可支持上万并发用户。<br>Spark 是一个开源的、跨平台的即时通讯客户端软件，可以应用在各种商业和组织机构中。它内建了群组聊天、电话集成，又有很强的安全性。它还给终端用户提供了一些人性化的服务，比如拼写检查、群组聊天室的书签标注和选项卡式的对话窗口。配合开源的Openfire，Spark 非常容易部署和使用。</p>
 <ol>
-<li>运行状态<br>当一个活动位于返回栈的栈顶时，这时活动就处于运行状态。系统最不愿意回收的就是处于运行状态的活动，因为这会带来非常差的用户体验。</li>
-<li>暂停状态<br>当一个活动不再处于栈顶位置，但仍然可见时，这时活动就进入了暂停状态。你可能会觉得既然活动已经不在栈顶了，还怎么会可见呢？这是因为并不是每一个活动都会占满整个屏幕的，比如对话框形式的活动只会占用屏幕中间的部分区域。处于暂停状态的活动仍然是完全存活着的，系统也不愿意去回收这种活动（因为它还是可见的，回收可见的东西都会在用户体验方面有不好的影响），只有在内存极低的情况下，系统才会去考虑回收这种活动。</li>
-<li>停止状态<br>当一个活动不再处于栈顶位置，并且完全不可见的时候，就进入了停止状态。系统仍然会为这种活动保存相应的状态和成员变量，但是这并不是完全可靠的，当其他地方需要内存时，处于停止状态的活动有可能会被系统回收。</li>
-<li>销毁状态<br>当一个活动从返回栈中移除后就变成了销毁状态。系统会最倾向于回收处于这种状态的活动，从而保证手机的内存充足。</li>
-</ol>
-<p>Activity 类中定义了七个回调方法，覆盖了活动生命周期的每一个环节，下面我来一一<br>介绍下这七个方法</p>
-<ol>
-<li>onCreate()<br>这个方法你已经看到过很多次了，每个活动中我们都重写了这个方法，它会在活动第一次被创建的时候调用。你应该在这个方法中完成活动的初始化操作，比如说加载布局、绑定事件等。</li>
-<li>onStart()<br>这个方法在活动由不可见变为可见的时候调用。</li>
-<li>onResume()<br>这个方法在活动准备好和用户进行交互的时候调用。此时的活动一定位于返回栈的栈顶，并且处于运行状态。</li>
-<li>onPause()<br>这个方法在系统准备去启动或者恢复另一个活动的时候调用。我们通常会在这个方法中将一些消耗 CPU 的资源释放掉，以及保存一些关键数据，但这个方法的执行速度一定要快，不然会影响到新的栈顶活动的使用。</li>
-<li>onStop()<br>这个方法在活动完全不可见的时候调用。它和onPause()方法的主要区别在于，如果启动的新活动是一个对话框式的活动，那么onPause()方法会得到执行，而onStop()方法并不会执行。</li>
-<li>onDestroy()<br>这个方法在活动被销毁之前调用，之后活动的状态将变为销毁状态。</li>
-<li>onRestart()<br>这个方法在活动由停止状态变为运行状态之前调用，也就是活动被重新启动了。下面的图可以帮你很好的了解该调用过程：<br><img src="/picture/zhouqi.png" alt=""></li>
-</ol>
-<p>以上七个方法中除了 onRestart()方法，其他都是两两相对的，从而又可以将活动分为三种生存期。</p>
-<ol>
-<li>完整生存期<br>活动在 onCreate()方法和onDestroy()方法之间所经历的，就是完整生存期。一般情况下，一个活动会在 onCreate()方法中完成各种初始化操作，而在onDestroy()方法中完成释放内存的操作。</li>
-<li>可见生存期<br>活动在 onStart()方法和onStop()方法之间所经历的，就是可见生存期。在可见生存期内，活动对于用户总是可见的，即便有可能无法和用户进行交互。我们可以通过这两个方法，合理地管理那些对用户可见的资源。比如在onStart()方法中对资源进行加载，而在onStop()方法中对资源进行释放， 从而保证处于停止状态的活动不会占用过多内存。</li>
-<li>前台生存期<br>活动在 onResume()方法和onPause()方法之间所经历的，就是前台生存期。在前台生存期内，活动总是处于运行状态的，此时的活动是可以和用户进行相互的，我们平时看到和接触最多的也这个状态下的活动。<br>Android中的活动是可以层叠的，以栈来管理活动，没启动一个新活动就会覆盖在原活动之上，点击back会销毁最上面的活动，下面展示了如何管理活动操作的。<br><img src="/picture/zhan.png" alt=""><br>而不同的活动之间是通过bundle对象来通信传递数据的。</li>
-</ol>
-<p>最后所谓温故知新，我将servlet与activity比较一下：</p>
-<ol>
-<li>activity是Android的窗口容器，因此activity最终以窗口形式显示出来，而servlet并不会生成应用界面，只向浏览器生成文本响应。</li>
-<li>activity的本质是通过各种界面组件来搭建界面；而servlet则主要以IO流向浏览者生成文本响应，用户看到的界面其实是浏览器负责生成的。</li>
-<li>activity之间的跳转主要通过intent对象来控制；而servlet之间跳转则主要由用户请求来控制。</li>
+<li>Openfire 的安装与配置<br>装 Openfire 之前，先安装 Java 的 JRE 环境，也可以下载包含 JRE 的 Openfire 文件。从网站<a href="http://www.igniterealtime.org/downloads/index.jsp" target="_blank" rel="external">http://www.igniterealtime.org/downloads/index.jsp</a>下载最新版本的Openfire。下载的文件是个可执行文件，双击安装，第一步选择简体中文，其他按照默认设置一步步安装即可。最后一步选择执行 Openfire，界面如图：<br><img src="/picture/qidong.jpg" alt=""><br>Openfire 支持完全的 Web配置。直接点击界面中的LaunchAdmin即可开始通讯服务器的配置。登入管理界面即开始配置向导。语言选择为简体中文;服务器设置保持默认即可; 数据库设置里面有两个选择，标准数据库连接和嵌入的数据库。笔者选择标准数据库连接，因为本文要用 MySQL数据库，这里填入服务器的IP或者域名、选择建好的数据库名、数据库的用户名和密码，这样就可以用MySQL作为数据库服务器;特性设置里面保持默认即可; 管理员账户为admin，只要填入电子邮箱和设置密码即可;最后一步是安装完成。这样就可以登录到管理控制台。在这个控制台里可以对服务器、用户、分组、插件等功能做设置。管理控制台的界面如图<br><img src="/picture/openfire.png" alt=""></li>
+<li>Spark 的安装与配置<br>从<a href="http://www.igniterealtime.org/downloads/index.jsp" target="_blank" rel="external">http://www.igniterealtime.org/downloads/index.jsp</a>下载 Spark 的最新版本，选择 Windows 版本。Spark的安装过程比较简单，登录的时候服务器地址选择安装Openfire时设置的IP或域名即可。Spark 是个IM 客户端，具备了几乎一切即时通讯工具的功能。利用Spark菜单的Plugin 功能，可以得到很多实用插件，比如拼写检查、即时翻译等功能。Spark最吸引人的一个功能就是可以整合很多第三方 IM 账户，可以让用户和 MSN、Yahoo、ICQ、GTalk等 IM 用户互相通信，这个特性解决了各种 IM 之间交互通信的问题。整合国内的 QQ、人人网 IM 等还在测试阶段，不能正式使用，因为QQ等是采用封闭协议的，还有待进一步完善。<br>Openfire 即时通讯服务器所需要的几乎所有的插件都可以从<a href="http://www.igniterealtime.org/projects/openfire/plugins.jsp" target="_blank" rel="external">http://www.igniterealtime.org/projects/openfire/plugins.jsp</a>下载,大家可以根据自己需要从上面下载相应的插件，然后把文件复制到Openfire/Plugins文件夹下或者从Openfire控制台插件标签里直接上传部署，重启Openfire 服务即可。<br>Openfire + Spark 是跨平台的，支持多版本操作系统。这个也是我自己的毕业设计涉及的内容，感觉他的功能很强大，而且是开源的，可以根据自己的需要设计自己及时通讯系统。所以分享给大家。</li>
 </ol>
   
 	</div>
@@ -124,20 +100,20 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Android/">Android</a>
+  <span></span> <a href="/tags/IM/">IM</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Android/">Android</a>
+  <a class="article-category-link" href="/categories/IM/">IM</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/05/12/activity/" data-title="深入理解activity | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/05/19/IM/" data-title="即时通讯——Openfire + Spark | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -146,19 +122,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/15/shijian/" title="Android之事件和intent">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Android之事件和intent</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/08/rumen/"  title="Android入门">
+<a href="/2015/05/15/shijian/"  title="Android之事件和intent">
  <strong>NEXT:</strong><br/> 
- <span>Android入门
+ <span>Android之事件和intent
 </span>
 </a>
 </div>
