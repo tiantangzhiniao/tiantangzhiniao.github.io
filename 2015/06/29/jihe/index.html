@@ -4,15 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Android之事件和intent | Leo&#39;s blog</title>
+    <title>Java之集合框架 | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="在Android中与界面编程息息相关的就是事件处理了，当用户在程序界面上执行各种操作时，应用程序必须为用户动作提供响应动作。Android提供了两种方式的事件处理：基于监听的事件处理和基于回调的事件处理基于监听的事件处理模型编程步骤：
-
-获取界面组件（事件源），即被监听的对象，任何组件都可以。
-实现">
+    <meta name="description" content="最近在复习和巩固Java的高级编程，让我一下子也明白了以前很多不清楚的疑点，今天就先总结一下Java中的集合框架。集合框架是为表示和操作集合而规定的一种统一的标准的体系结构。任何集合框架都包含三大块内容：对外的接口、接口的实现和对集合运算的算法。接口：即表示集合的抽象数据类型。接口提供了让我们对集合">
     
     
     
@@ -72,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/15/shijian/" title="Android之事件和intent" itemprop="url">Android之事件和intent</a>
+      <a href="/2015/06/29/jihe/" title="Java之集合框架" itemprop="url">Java之集合框架</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-05-15T09:20:11.000Z" itemprop="datePublished">2015-05-15</time>
-    更新日期:<time datetime="2015-05-15T09:24:00.317Z" itemprop="dateModified">2015-05-15</time>
+    <time datetime="2015-06-29T13:36:51.000Z" itemprop="datePublished">2015-06-29</time>
+    更新日期:<time datetime="2015-06-29T13:41:46.739Z" itemprop="dateModified">2015-06-29</time>
     
   </p>
 </header>
@@ -92,38 +89,43 @@
 		
 		</div>
 		
-		<p>在Android中与界面编程息息相关的就是事件处理了，当用户在程序界面上执行各种操作时，应用程序必须为用户动作提供响应动作。Android提供了两种方式的事件处理：基于监听的事件处理和基于回调的事件处理<br>基于监听的事件处理模型编程步骤：</p>
+		<p>最近在复习和巩固Java的高级编程，让我一下子也明白了以前很多不清楚的疑点，今天就先总结一下Java中的集合框架。<br>集合框架是为表示和操作集合而规定的一种统一的标准的体系结构。任何集合框架都包含三大块内容：对外的接口、接口的实现和对集合运算的算法。接口：即表示集合的抽象数据类型。接口提供了让我们对集合中所表示的内容进行单独操作的可能。实现：也就是集合框架中接口的具体实现。实际它们就是那些可复用的数据结构。<br>Java的集合框架提供了一套设计优良的接口和类，使程序员操作成批的数据或对象元素极为方便，极大的减化了程序员编程时的负担。<br>集合与数组的区别：</p>
 <ul>
-<li>获取界面组件（事件源），即被监听的对象，任何组件都可以。</li>
-<li>实现监听器类，即一个特殊的Java类，必须实现XxxListener接口，事件编程的关键。</li>
-<li>调用事件源的setXxxListener方法将事件监听器对象注册给组件（事件源），一般调用setXxxListener（XxxListener）方法即可。</li>
+<li>数组是定长，即创建后固定不变；集合是不定长，其 长度可动态增长或减少。</li>
+<li>数组是同构的，即数组中的元素是相同的类型；集合可以是异构的，当然也可通过泛型创建类型安全的同构集合。</li>
+<li>数组中可以存放基本数据类型或对象；集合只存放对象。<br><img src="/picture/jihe.bmp" alt=""><br>由上图可看出Java的集合框架的核心接口为：Collection、Map、Iterator，这三个接口为以后要使用的最重点的接口。按具体集合类使用上的特性来分的话，主要有三类：List、Set 和 Map。他们的特点如下：</li>
+<li>List 是有序的，但允许重复</li>
+<li>Set 是无序的，但不允许重复</li>
+<li>Map 表现的是键值对的概念<br>如上图中所示，其中在编程实践中最常用到的类有：ArrayList，LinkedList，HashSet和HashMap,下面通过代码举一个例子<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class TestList &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span>[] args) &#123;</span><br><span class="line">		<span class="comment">//Object[] list = new Object[10] ;</span></span><br><span class="line">		<span class="comment">//String[] list = new String[10] ;下面的是使用泛型创建的链表类</span></span><br><span class="line">		List&lt;<span class="keyword">String</span>&gt; list = <span class="keyword">new</span> LinkedList&lt;<span class="keyword">String</span>&gt;() ;</span><br><span class="line">		<span class="comment">//向数组添加元素，调用了list的add（）方法</span></span><br><span class="line">		list.<span class="built_in">add</span>(<span class="string">"abc"</span>) ;</span><br><span class="line">		list.<span class="built_in">add</span>(<span class="string">"abc"</span>) ;</span><br><span class="line">		list.<span class="built_in">add</span>(<span class="string">"sdfddf"</span>) ;</span><br><span class="line">		<span class="comment">//都是 String</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; list.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">			<span class="keyword">String</span>  s = (<span class="keyword">String</span>)list.<span class="built_in">get</span>(i) ;<span class="comment">//不使用泛型的话必须得强制类型转换</span></span><br><span class="line">		&#125;</span><br><span class="line">		System.out.<span class="built_in">println</span>(list.<span class="built_in">size</span>());</span><br><span class="line">		<span class="comment">//使用get()方法得到list[0]</span></span><br><span class="line">		System.out.<span class="built_in">println</span>(list.<span class="built_in">get</span>(<span class="number">0</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>而基于回调的事件处理，关于回调机制我在上一篇微博中已经讲了，简单的说就是在组件的属性中直接定义事件，这也是现在Android经常用到的。</p>
-<ol>
-<li>Handle、Looper与MessageQueue之间的关系及工作原理<br>Android中不允许在子线程中更新界面组件，要在子线程中更新界面组件，需要用Handle对象实现。因为要让handle正常工作，当前线程中必须有一个Looper对象，所以使用handle步骤是：调用Looper的prepare()方法为当前线程创建Looper对象，创建Looper对象时，它的构造器会创建与之配套的MessageQueue；然后创建handle子类的实例，重写handleMessage()方法，该方法负责处理来自其他线程的消息。最后调用Looper的Loop()方法启动Looper。<br>在Android中UI线程主要负责处理用户的按键事件、用户触屏事件及屏幕绘图事件等，因此其他操作不能阻塞UI线程，否则UI界面会停止响应—这样用户感觉会非常糟糕，所以一定牢记：千万不要在UI线程中执行一些耗时的操作</li>
-<li>Intent简介<br>Intent通过指定action属性（其实就是一个普通的字符串），实现把该intent与具体的activity分离，从而提供高层次的解耦（低耦合）。当Android应用不管是启动activity，还是启动service、BroadcastReceiver组件时，Android系统都是由intent来实现的。简单的说，Android使用intent封装了应用程序的“启动意图”，这种“意图”并未直接与任何程序组件耦合。而intent的属性都是通过在 <intent-filter...>属性进行配置的。</intent-filter...></li>
-</ol>
-<p>最后和大家分享一个比较酷炫的东西和一个小技术，在朋友圈里，经常见到一些html5海报，浏览者通过手指的滑动实现页面的切换效果，由于该效果和ppt演示十分相似，也有人称之为html5PPT。而制作这个大家可以看看这个<a href="http://chuansong.me/n/674095" target="_blank" rel="external">http://chuansong.me/n/674095</a>，做出来的效果真是棒棒哒。<br>如何将MySQL中的数据导出为xls格式的：<br>select *from 数据库.表名（world.question_attribute_value） into outfile ‘d:test.xls’;<br>这个时候xls文件是utf-8编码的，用excel打开，会出现乱码。把test.xls以文本方式打开，然后另存为，在编码选择ANSI编码，保存。ok，再用excel打开，乱码问题，烟消云散。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class TestMap &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Map&lt;String,Object&gt; map = new HashMap&lt;String,Object&gt;() ;</span><br><span class="line">		</span><br><span class="line">		map.put("cname", "张三") ;</span><br><span class="line">		map.put("score", 500) ;</span><br><span class="line">		map.put("cname","小三") ;</span><br><span class="line">		//List&lt;Customer&gt;</span><br><span class="line">//		List&lt;Map&lt;String,Object&gt;&gt;</span><br><span class="line">		//获得所有的key</span><br><span class="line">		Set&lt;String&gt; keys = map.keySet() ;</span><br><span class="line">		for(String k : keys)&#123;</span><br><span class="line">			Object v = map.get(k) ;</span><br><span class="line">			System.out.println("key="+k+",value="+v);</span><br><span class="line">		&#125;</span><br><span class="line">		//获得所有的value</span><br><span class="line">		Collection&lt;Object&gt; col = map.values() ;</span><br><span class="line">		for (Object o : col) &#123;</span><br><span class="line">			System.out.println(o);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的2个代码简单的示范了list类和map类的常用方法，具体的方法我们可以查阅Java的API，这也是学习的关键，因为我们不能记住所有的方法，当我们用到某个类是一定要学会查阅API，这才是学习的方法。<br>同时我列举一下面试中Java会常问的HashMap 与 Hashtable的区别，这两者在方式上几乎一致，他们的区别在于：</p>
+<ul>
+<li>Hashtable 继承了陈旧的 Dictionary 类，HashMap 是Java2 引进的 Map 接口的一个实现。</li>
+<li>Hashtable 是线程安全的，也就是说是同步的，速度慢；而HashMap是线程序非安全的，即是异步的，速度快。</li>
+<li>HashMap 允许让你将 null 作为 key (这个key也只能有一个)，Hashtable 不允许 null 作为 key。</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Android/">Android</a>
+  <span></span> <a href="/tags/编程/">编程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Android/">Android</a>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/05/15/shijian/" data-title="Android之事件和intent | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/06/29/jihe/" data-title="Java之集合框架 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -132,19 +134,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/19/IM/" title="即时通讯——Openfire + Spark">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  即时通讯——Openfire + Spark</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/12/activity/"  title="深入理解activity">
+<a href="/2015/06/12/bianma/"  title="编码问题">
  <strong>NEXT:</strong><br/> 
- <span>深入理解activity
+ <span>编码问题
 </span>
 </a>
 </div>

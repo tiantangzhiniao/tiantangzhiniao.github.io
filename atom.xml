@@ -4,7 +4,7 @@
   <subtitle><![CDATA[活到老，学到老：Never too old to learn]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-06-12T06:51:14.819Z</updated>
+  <updated>2015-06-29T13:41:46.739Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Java之集合框架]]></title>
+    <link href="http://yoursite.com/2015/06/29/jihe/"/>
+    <id>http://yoursite.com/2015/06/29/jihe/</id>
+    <published>2015-06-29T13:36:51.000Z</published>
+    <updated>2015-06-29T13:41:46.739Z</updated>
+    <content type="html"><![CDATA[<p>最近在复习和巩固Java的高级编程，让我一下子也明白了以前很多不清楚的疑点，今天就先总结一下Java中的集合框架。<br>集合框架是为表示和操作集合而规定的一种统一的标准的体系结构。任何集合框架都包含三大块内容：对外的接口、接口的实现和对集合运算的算法。接口：即表示集合的抽象数据类型。接口提供了让我们对集合中所表示的内容进行单独操作的可能。实现：也就是集合框架中接口的具体实现。实际它们就是那些可复用的数据结构。<br>Java的集合框架提供了一套设计优良的接口和类，使程序员操作成批的数据或对象元素极为方便，极大的减化了程序员编程时的负担。<br>集合与数组的区别：</p>
+<ul>
+<li>数组是定长，即创建后固定不变；集合是不定长，其 长度可动态增长或减少。</li>
+<li>数组是同构的，即数组中的元素是相同的类型；集合可以是异构的，当然也可通过泛型创建类型安全的同构集合。</li>
+<li>数组中可以存放基本数据类型或对象；集合只存放对象。<br><img src="/picture/jihe.bmp" alt=""><br>由上图可看出Java的集合框架的核心接口为：Collection、Map、Iterator，这三个接口为以后要使用的最重点的接口。按具体集合类使用上的特性来分的话，主要有三类：List、Set 和 Map。他们的特点如下：</li>
+<li>List 是有序的，但允许重复</li>
+<li>Set 是无序的，但不允许重复</li>
+<li>Map 表现的是键值对的概念<br>如上图中所示，其中在编程实践中最常用到的类有：ArrayList，LinkedList，HashSet和HashMap,下面通过代码举一个例子<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class TestList &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(<span class="keyword">String</span>[] args) &#123;</span><br><span class="line">		<span class="comment">//Object[] list = new Object[10] ;</span></span><br><span class="line">		<span class="comment">//String[] list = new String[10] ;下面的是使用泛型创建的链表类</span></span><br><span class="line">		List&lt;<span class="keyword">String</span>&gt; list = <span class="keyword">new</span> LinkedList&lt;<span class="keyword">String</span>&gt;() ;</span><br><span class="line">		<span class="comment">//向数组添加元素，调用了list的add（）方法</span></span><br><span class="line">		list.<span class="built_in">add</span>(<span class="string">"abc"</span>) ;</span><br><span class="line">		list.<span class="built_in">add</span>(<span class="string">"abc"</span>) ;</span><br><span class="line">		list.<span class="built_in">add</span>(<span class="string">"sdfddf"</span>) ;</span><br><span class="line">		<span class="comment">//都是 String</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; list.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">			<span class="keyword">String</span>  s = (<span class="keyword">String</span>)list.<span class="built_in">get</span>(i) ;<span class="comment">//不使用泛型的话必须得强制类型转换</span></span><br><span class="line">		&#125;</span><br><span class="line">		System.out.<span class="built_in">println</span>(list.<span class="built_in">size</span>());</span><br><span class="line">		<span class="comment">//使用get()方法得到list[0]</span></span><br><span class="line">		System.out.<span class="built_in">println</span>(list.<span class="built_in">get</span>(<span class="number">0</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class TestMap &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Map&lt;String,Object&gt; map = new HashMap&lt;String,Object&gt;() ;</span><br><span class="line">		</span><br><span class="line">		map.put("cname", "张三") ;</span><br><span class="line">		map.put("score", 500) ;</span><br><span class="line">		map.put("cname","小三") ;</span><br><span class="line">		//List&lt;Customer&gt;</span><br><span class="line">//		List&lt;Map&lt;String,Object&gt;&gt;</span><br><span class="line">		//获得所有的key</span><br><span class="line">		Set&lt;String&gt; keys = map.keySet() ;</span><br><span class="line">		for(String k : keys)&#123;</span><br><span class="line">			Object v = map.get(k) ;</span><br><span class="line">			System.out.println("key="+k+",value="+v);</span><br><span class="line">		&#125;</span><br><span class="line">		//获得所有的value</span><br><span class="line">		Collection&lt;Object&gt; col = map.values() ;</span><br><span class="line">		for (Object o : col) &#123;</span><br><span class="line">			System.out.println(o);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的2个代码简单的示范了list类和map类的常用方法，具体的方法我们可以查阅Java的API，这也是学习的关键，因为我们不能记住所有的方法，当我们用到某个类是一定要学会查阅API，这才是学习的方法。<br>同时我列举一下面试中Java会常问的HashMap 与 Hashtable的区别，这两者在方式上几乎一致，他们的区别在于：</p>
+<ul>
+<li>Hashtable 继承了陈旧的 Dictionary 类，HashMap 是Java2 引进的 Map 接口的一个实现。</li>
+<li>Hashtable 是线程安全的，也就是说是同步的，速度慢；而HashMap是线程序非安全的，即是异步的，速度快。</li>
+<li>HashMap 允许让你将 null 作为 key (这个key也只能有一个)，Hashtable 不允许 null 作为 key。</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>最近在复习和巩固Java的高级编程，让我一下子也明白了以前很多不清楚的疑点，今天就先总结一下Java中的集合框架。<br>集合框架是为表示和操作集合而规定的一种统一的标准的体系结构。任何集合框架都包含三大块内容：对外的接口、接口的实现和对集合运算的算法。接口：即表示集合的抽]]>
+    </summary>
+    
+      <category term="编程" scheme="http://yoursite.com/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+      <category term="编程" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[编码问题]]></title>
