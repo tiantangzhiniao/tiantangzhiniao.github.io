@@ -4,7 +4,7 @@
   <subtitle><![CDATA[活到老，学到老：Never too old to learn]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-06-29T13:41:46.739Z</updated>
+  <updated>2015-06-30T12:10:50.845Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Java之抽象类和接口]]></title>
+    <link href="http://yoursite.com/2015/06/30/jiekou/"/>
+    <id>http://yoursite.com/2015/06/30/jiekou/</id>
+    <published>2015-06-30T12:05:27.000Z</published>
+    <updated>2015-06-30T12:10:50.845Z</updated>
+    <content type="html"><![CDATA[<p>今天总结一下Java高级编程中大家经常搞混的抽象类和接口。</p>
+<ol>
+<li>抽象类<br>在Java中，当一个类被abstract关键字修饰时，该类称为抽象类。抽象类语法如下：<br>  <code>public abstract class 类名称{}</code><br>在语法中：abstract关键字表示该类被定义为抽象类。普通类与抽象类相比，主要有一下几点区分：</li>
+</ol>
+<ul>
+<li>抽象类需要修饰符abstract，普通方法不需要。</li>
+<li><p>普通类可以实例化，抽象类不能实例化。<br>当一个类被定义为抽象类是时，它可以包含各种类型的成员，包括属性、方法等，其中方法又可以分为普通方法和抽象方法。语法格式如下：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">Public</span> abstract <span class="class"><span class="keyword">class</span> 类名称&#123;</span></span><br><span class="line">    修饰符 abstract 返回类型 方法名（）;</span><br><span class="line">    修饰符 返回类型 方法名（）&#123;</span><br><span class="line">          方法体</span><br><span class="line">          &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p> 在Java中，当一个类的方法被abstract关键字修饰时，该方法称为抽象方法。抽象方法所在的类必须是定义为抽象类。当一个方法被定义为抽象方法后，意味着该方法不会具体的实现，而是在抽象类的子类中通过方法的重写进行实现。抽象方法是没有方法体的。</p>
+</li>
+</ul>
+<ol>
+<li>接口<br>简单的说，接口就是一个不能实例化的类型。接口类型的定义类似于类的定义，语法有如下：<code>Public interface 接口名{//接口成员}</code><br>和抽象类不同，定义接口使用interface修饰符，访问修饰只能是public，且可选。接口成员可以是全局变量和公共的抽象方法。与抽象类一样，接口要使用也必须通过子类，子类通过implement是关键字实现。<br>一个普通类只能继承一个父类，但能同时继承多个接口，也可以同时继承抽象类和实现接口。</li>
+<li>两者的差别<br>接口作为系统与外界交互的窗口，接口体现是一种规范。当一个程序中使用接口时，接口是多个模块之间的耦合标准；当多个应用程序之间使用时，接口时多个程序之间的通信标准。因此一个系统中的接口不应该经常改变。抽象类则不一样，抽象类作为系统中多个子列共同的父类，它所体现的是一种模板设计。抽象做为多个子类的抽象父类，可以被当场系统实现过程中的中间产品，这个中间产品已经实现类系统的部分功能（那些已经提供实现的方法），但这个产品依然不能当成最终产品，必须有更进一步的完善。两者的用法差别如下：</li>
+</ol>
+<ul>
+<li>接口只能包含抽象方法，不包含已经提供实现的方法；抽象类则完全可以包含普通方法。</li>
+<li>接口里不能定义静态方法；抽象类里可以静态方法。</li>
+<li>接口里只能定义静态常量属性，不能定义普通属性，即只能用public static final修饰；抽象类则即可以定义普通属性，也可以定义静态常量属性。</li>
+<li>一个类最多只能有一个直接父类，包括抽象类；但一个类可以直接实现多个接口，通过实现多个接口可以弥补Java继承的不足</li>
+</ul>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>今天总结一下Java高级编程中大家经常搞混的抽象类和接口。</p>
+<ol>
+<li>抽象类<br>在Java中，当一个类被abstract关键字修饰时，该类称为抽象类。抽象类语法如下：<br>  <code>public abstract class 类名称{}</cod]]>
+    </summary>
+    
+      <category term="编程" scheme="http://yoursite.com/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+      <category term="编程" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Java之集合框架]]></title>

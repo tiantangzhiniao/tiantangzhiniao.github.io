@@ -4,12 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>深入理解activity | Leo&#39;s blog</title>
+    <title>Java之抽象类和接口 | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="activity是Android应用的重要的组成单元之一（另外三个是service、broadcastreceive和contentprovider），也是Android应用最常见的组件之一，而对它的生命周期的深刻了解对于Android开发十分重要。首先得说一下Android的回调机制：当开发者需要">
+    <meta name="description" content="今天总结一下Java高级编程中大家经常搞混的抽象类和接口。
+
+抽象类在Java中，当一个类被abstract关键字修饰时，该类称为抽象类。抽象类语法如下：  public abstract class 类名称{}在语法中：abstract关键字表示该类被定义为抽象类。普通类与抽象类相比，主要有一下几">
     
     
     
@@ -69,15 +71,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/12/activity/" title="深入理解activity" itemprop="url">深入理解activity</a>
+      <a href="/2015/06/30/jiekou/" title="Java之抽象类和接口" itemprop="url">Java之抽象类和接口</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-05-12T08:40:06.000Z" itemprop="datePublished">2015-05-12</time>
-    更新日期:<time datetime="2015-05-12T08:54:11.235Z" itemprop="dateModified">2015-05-12</time>
+    <time datetime="2015-06-30T12:05:27.000Z" itemprop="datePublished">2015-06-30</time>
+    更新日期:<time datetime="2015-06-30T12:10:50.845Z" itemprop="dateModified">2015-06-30</time>
     
   </p>
 </header>
@@ -89,55 +91,47 @@
 		
 		</div>
 		
-		<p>activity是Android应用的重要的组成单元之一（另外三个是service、broadcastreceive和contentprovider），也是Android应用最常见的组件之一，而对它的生命周期的深刻了解对于Android开发十分重要。<br>首先得说一下Android的回调机制：当开发者需要该组件能响应特定的事件，可以选择性地实现该组件的特定方法，即当用户在该组件上激发某个事件时，该组件上特定的方法就会回调（通俗的讲就是实现某个功能就会调用给功能对应的方法叫回调）。Activity运行过程中所处的不同状态称为生命周期，在不同的状态会回调不同的方法。<br>每个活动在其生命周期中最多可能会有四种状态。</p>
+		<p>今天总结一下Java高级编程中大家经常搞混的抽象类和接口。</p>
 <ol>
-<li>运行状态<br>当一个活动位于返回栈的栈顶时，这时活动就处于运行状态。系统最不愿意回收的就是处于运行状态的活动，因为这会带来非常差的用户体验。</li>
-<li>暂停状态<br>当一个活动不再处于栈顶位置，但仍然可见时，这时活动就进入了暂停状态。你可能会觉得既然活动已经不在栈顶了，还怎么会可见呢？这是因为并不是每一个活动都会占满整个屏幕的，比如对话框形式的活动只会占用屏幕中间的部分区域。处于暂停状态的活动仍然是完全存活着的，系统也不愿意去回收这种活动（因为它还是可见的，回收可见的东西都会在用户体验方面有不好的影响），只有在内存极低的情况下，系统才会去考虑回收这种活动。</li>
-<li>停止状态<br>当一个活动不再处于栈顶位置，并且完全不可见的时候，就进入了停止状态。系统仍然会为这种活动保存相应的状态和成员变量，但是这并不是完全可靠的，当其他地方需要内存时，处于停止状态的活动有可能会被系统回收。</li>
-<li>销毁状态<br>当一个活动从返回栈中移除后就变成了销毁状态。系统会最倾向于回收处于这种状态的活动，从而保证手机的内存充足。</li>
+<li>抽象类<br>在Java中，当一个类被abstract关键字修饰时，该类称为抽象类。抽象类语法如下：<br>  <code>public abstract class 类名称{}</code><br>在语法中：abstract关键字表示该类被定义为抽象类。普通类与抽象类相比，主要有一下几点区分：</li>
 </ol>
-<p>Activity 类中定义了七个回调方法，覆盖了活动生命周期的每一个环节，下面我来一一<br>介绍下这七个方法</p>
+<ul>
+<li>抽象类需要修饰符abstract，普通方法不需要。</li>
+<li><p>普通类可以实例化，抽象类不能实例化。<br>当一个类被定义为抽象类是时，它可以包含各种类型的成员，包括属性、方法等，其中方法又可以分为普通方法和抽象方法。语法格式如下：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">Public</span> abstract <span class="class"><span class="keyword">class</span> 类名称&#123;</span></span><br><span class="line">    修饰符 abstract 返回类型 方法名（）;</span><br><span class="line">    修饰符 返回类型 方法名（）&#123;</span><br><span class="line">          方法体</span><br><span class="line">          &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p> 在Java中，当一个类的方法被abstract关键字修饰时，该方法称为抽象方法。抽象方法所在的类必须是定义为抽象类。当一个方法被定义为抽象方法后，意味着该方法不会具体的实现，而是在抽象类的子类中通过方法的重写进行实现。抽象方法是没有方法体的。</p>
+</li>
+</ul>
 <ol>
-<li>onCreate()<br>这个方法你已经看到过很多次了，每个活动中我们都重写了这个方法，它会在活动第一次被创建的时候调用。你应该在这个方法中完成活动的初始化操作，比如说加载布局、绑定事件等。</li>
-<li>onStart()<br>这个方法在活动由不可见变为可见的时候调用。</li>
-<li>onResume()<br>这个方法在活动准备好和用户进行交互的时候调用。此时的活动一定位于返回栈的栈顶，并且处于运行状态。</li>
-<li>onPause()<br>这个方法在系统准备去启动或者恢复另一个活动的时候调用。我们通常会在这个方法中将一些消耗 CPU 的资源释放掉，以及保存一些关键数据，但这个方法的执行速度一定要快，不然会影响到新的栈顶活动的使用。</li>
-<li>onStop()<br>这个方法在活动完全不可见的时候调用。它和onPause()方法的主要区别在于，如果启动的新活动是一个对话框式的活动，那么onPause()方法会得到执行，而onStop()方法并不会执行。</li>
-<li>onDestroy()<br>这个方法在活动被销毁之前调用，之后活动的状态将变为销毁状态。</li>
-<li>onRestart()<br>这个方法在活动由停止状态变为运行状态之前调用，也就是活动被重新启动了。下面的图可以帮你很好的了解该调用过程：<br><img src="/picture/zhouqi.png" alt=""></li>
+<li>接口<br>简单的说，接口就是一个不能实例化的类型。接口类型的定义类似于类的定义，语法有如下：<code>Public interface 接口名{//接口成员}</code><br>和抽象类不同，定义接口使用interface修饰符，访问修饰只能是public，且可选。接口成员可以是全局变量和公共的抽象方法。与抽象类一样，接口要使用也必须通过子类，子类通过implement是关键字实现。<br>一个普通类只能继承一个父类，但能同时继承多个接口，也可以同时继承抽象类和实现接口。</li>
+<li>两者的差别<br>接口作为系统与外界交互的窗口，接口体现是一种规范。当一个程序中使用接口时，接口是多个模块之间的耦合标准；当多个应用程序之间使用时，接口时多个程序之间的通信标准。因此一个系统中的接口不应该经常改变。抽象类则不一样，抽象类作为系统中多个子列共同的父类，它所体现的是一种模板设计。抽象做为多个子类的抽象父类，可以被当场系统实现过程中的中间产品，这个中间产品已经实现类系统的部分功能（那些已经提供实现的方法），但这个产品依然不能当成最终产品，必须有更进一步的完善。两者的用法差别如下：</li>
 </ol>
-<p>以上七个方法中除了 onRestart()方法，其他都是两两相对的，从而又可以将活动分为三种生存期。</p>
-<ol>
-<li>完整生存期<br>活动在 onCreate()方法和onDestroy()方法之间所经历的，就是完整生存期。一般情况下，一个活动会在 onCreate()方法中完成各种初始化操作，而在onDestroy()方法中完成释放内存的操作。</li>
-<li>可见生存期<br>活动在 onStart()方法和onStop()方法之间所经历的，就是可见生存期。在可见生存期内，活动对于用户总是可见的，即便有可能无法和用户进行交互。我们可以通过这两个方法，合理地管理那些对用户可见的资源。比如在onStart()方法中对资源进行加载，而在onStop()方法中对资源进行释放， 从而保证处于停止状态的活动不会占用过多内存。</li>
-<li>前台生存期<br>活动在 onResume()方法和onPause()方法之间所经历的，就是前台生存期。在前台生存期内，活动总是处于运行状态的，此时的活动是可以和用户进行相互的，我们平时看到和接触最多的也这个状态下的活动。<br>Android中的活动是可以层叠的，以栈来管理活动，没启动一个新活动就会覆盖在原活动之上，点击back会销毁最上面的活动，下面展示了如何管理活动操作的。<br><img src="/picture/zhan.png" alt=""><br>而不同的活动之间是通过bundle对象来通信传递数据的。</li>
-</ol>
-<p>最后所谓温故知新，我将servlet与activity比较一下：</p>
-<ol>
-<li>activity是Android的窗口容器，因此activity最终以窗口形式显示出来，而servlet并不会生成应用界面，只向浏览器生成文本响应。</li>
-<li>activity的本质是通过各种界面组件来搭建界面；而servlet则主要以IO流向浏览者生成文本响应，用户看到的界面其实是浏览器负责生成的。</li>
-<li>activity之间的跳转主要通过intent对象来控制；而servlet之间跳转则主要由用户请求来控制。</li>
-</ol>
+<ul>
+<li>接口只能包含抽象方法，不包含已经提供实现的方法；抽象类则完全可以包含普通方法。</li>
+<li>接口里不能定义静态方法；抽象类里可以静态方法。</li>
+<li>接口里只能定义静态常量属性，不能定义普通属性，即只能用public static final修饰；抽象类则即可以定义普通属性，也可以定义静态常量属性。</li>
+<li>一个类最多只能有一个直接父类，包括抽象类；但一个类可以直接实现多个接口，通过实现多个接口可以弥补Java继承的不足</li>
+</ul>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Android/">Android</a>
+  <span></span> <a href="/tags/编程/">编程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Android/">Android</a>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/05/12/activity/" data-title="深入理解activity | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/06/30/jiekou/" data-title="Java之抽象类和接口 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -146,19 +140,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/15/shijian/" title="Android之事件和intent">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Android之事件和intent</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/08/rumen/"  title="Android入门">
+<a href="/2015/06/29/jihe/"  title="Java之集合框架">
  <strong>NEXT:</strong><br/> 
- <span>Android入门
+ <span>Java之集合框架
 </span>
 </a>
 </div>
