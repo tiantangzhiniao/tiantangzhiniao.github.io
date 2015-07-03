@@ -4,15 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Android之事件和intent | Leo&#39;s blog</title>
+    <title>Java之反射 | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="在Android中与界面编程息息相关的就是事件处理了，当用户在程序界面上执行各种操作时，应用程序必须为用户动作提供响应动作。Android提供了两种方式的事件处理：基于监听的事件处理和基于回调的事件处理基于监听的事件处理模型编程步骤：
-
-获取界面组件（事件源），即被监听的对象，任何组件都可以。
-实现">
+    <meta name="description" content="最近心情真是低到了谷底，各种不顺，确实自己刚入股市，心态也有问题，能在股市行走的人一定是心态非常好的人，能够不以物喜，不以己悲，对于盈亏能够及时身退。最近的学习效率也是够低的。今天就总结一下Java的反射机制吧。学习好反射机制对于理解框架是很有意义的。JAVA反射机制是在运行状态中，对于任意一个类，">
     
     
     
@@ -72,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/15/shijian/" title="Android之事件和intent" itemprop="url">Android之事件和intent</a>
+      <a href="/2015/07/03/fanshe/" title="Java之反射" itemprop="url">Java之反射</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-05-15T09:20:11.000Z" itemprop="datePublished">2015-05-15</time>
-    更新日期:<time datetime="2015-05-15T09:24:00.317Z" itemprop="dateModified">2015-05-15</time>
+    <time datetime="2015-07-03T06:17:02.000Z" itemprop="datePublished">2015-07-03</time>
+    更新日期:<time datetime="2015-07-03T06:21:26.557Z" itemprop="dateModified">2015-07-03</time>
     
   </p>
 </header>
@@ -92,38 +89,36 @@
 		
 		</div>
 		
-		<p>在Android中与界面编程息息相关的就是事件处理了，当用户在程序界面上执行各种操作时，应用程序必须为用户动作提供响应动作。Android提供了两种方式的事件处理：基于监听的事件处理和基于回调的事件处理<br>基于监听的事件处理模型编程步骤：</p>
+		<p>最近心情真是低到了谷底，各种不顺，确实自己刚入股市，心态也有问题，能在股市行走的人一定是心态非常好的人，能够不以物喜，不以己悲，对于盈亏能够及时身退。最近的学习效率也是够低的。今天就总结一下Java的反射机制吧。学习好反射机制对于理解框架是很有意义的。<br>JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。<br>Java反射机制主要提供了以下功能： </p>
 <ul>
-<li>获取界面组件（事件源），即被监听的对象，任何组件都可以。</li>
-<li>实现监听器类，即一个特殊的Java类，必须实现XxxListener接口，事件编程的关键。</li>
-<li>调用事件源的setXxxListener方法将事件监听器对象注册给组件（事件源），一般调用setXxxListener（XxxListener）方法即可。</li>
+<li>在运行时判断任意一个对象所属的类；</li>
+<li>在运行时构造任意一个类的对象；</li>
+<li>在运行时判断任意一个类所具有的成员变量和方法；</li>
+<li>在运行时调用任意一个对象的方法；</li>
+<li>生成动态代理。<br>在 Java 中，主要由以下类来实现反射，这些类大多都位于 java.lang.reflect 包中。 Class (java.lang.Class<t>)：表示正在运行的 Java 应用程序中的类和接口。Field：代表类或接口的成员，及相关信息。Method：提供类或接口上单独某个方法（以及访问该方法）的信息。Constructor：提供关于类的单个构造方法的信息以及对它的访问权限。Array类：提供了动态创建和访问Java数组的方法。关于这些类的具体方法还是参考API文档吧。<br>下面看一段代码<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class Demo&#123;</span><br><span class="line">    //other codes...</span><br><span class="line">&#125;</span><br><span class="line">class hello&#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Class&lt;?&gt; demo1=null;</span><br><span class="line">        Class&lt;?&gt; demo2=null;</span><br><span class="line">        Class&lt;?&gt; demo3=null;</span><br><span class="line">        try&#123;</span><br><span class="line">            //一般尽量采用这种形式</span><br><span class="line">            demo1=Class.forName("Reflect.Demo");</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        demo2=new Demo().getClass();</span><br><span class="line">        demo3=Demo.class;</span><br><span class="line">        System.out.println("类名称   "+demo1.getName());</span><br><span class="line">        System.out.println("类名称   "+demo2.getName());</span><br><span class="line">        System.out.println("类名称   "+demo3.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</t></li>
 </ul>
-<p>而基于回调的事件处理，关于回调机制我在上一篇微博中已经讲了，简单的说就是在组件的属性中直接定义事件，这也是现在Android经常用到的。</p>
-<ol>
-<li>Handle、Looper与MessageQueue之间的关系及工作原理<br>Android中不允许在子线程中更新界面组件，要在子线程中更新界面组件，需要用Handle对象实现。因为要让handle正常工作，当前线程中必须有一个Looper对象，所以使用handle步骤是：调用Looper的prepare()方法为当前线程创建Looper对象，创建Looper对象时，它的构造器会创建与之配套的MessageQueue；然后创建handle子类的实例，重写handleMessage()方法，该方法负责处理来自其他线程的消息。最后调用Looper的Loop()方法启动Looper。<br>在Android中UI线程主要负责处理用户的按键事件、用户触屏事件及屏幕绘图事件等，因此其他操作不能阻塞UI线程，否则UI界面会停止响应—这样用户感觉会非常糟糕，所以一定牢记：千万不要在UI线程中执行一些耗时的操作</li>
-<li>Intent简介<br>Intent通过指定action属性（其实就是一个普通的字符串），实现把该intent与具体的activity分离，从而提供高层次的解耦（低耦合）。当Android应用不管是启动activity，还是启动service、BroadcastReceiver组件时，Android系统都是由intent来实现的。简单的说，Android使用intent封装了应用程序的“启动意图”，这种“意图”并未直接与任何程序组件耦合。而intent的属性都是通过在 <intent-filter...>属性进行配置的。</intent-filter...></li>
-</ol>
-<p>最后和大家分享一个比较酷炫的东西和一个小技术，在朋友圈里，经常见到一些html5海报，浏览者通过手指的滑动实现页面的切换效果，由于该效果和ppt演示十分相似，也有人称之为html5PPT。而制作这个大家可以看看这个<a href="http://chuansong.me/n/674095" target="_blank" rel="external">http://chuansong.me/n/674095</a>，做出来的效果真是棒棒哒。<br>如何将MySQL中的数据导出为xls格式的：<br>select *from 数据库.表名（world.question_attribute_value） into outfile ‘d:test.xls’;<br>这个时候xls文件是utf-8编码的，用excel打开，会出现乱码。把test.xls以文本方式打开，然后另存为，在编码选择ANSI编码，保存。ok，再用excel打开，乱码问题，烟消云散。</p>
+<p>这段简单的代码就是输出类的名称。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Android/">Android</a>
+  <span></span> <a href="/tags/编程/">编程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Android/">Android</a>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/05/15/shijian/" data-title="Android之事件和intent | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/07/03/fanshe/" data-title="Java之反射 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -132,19 +127,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/19/IM/" title="即时通讯——Openfire + Spark">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  即时通讯——Openfire + Spark</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/12/activity/"  title="深入理解activity">
+<a href="/2015/06/30/jiekou/"  title="Java之抽象类和接口">
  <strong>NEXT:</strong><br/> 
- <span>深入理解activity
+ <span>Java之抽象类和接口
 </span>
 </a>
 </div>

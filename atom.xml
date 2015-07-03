@@ -4,7 +4,7 @@
   <subtitle><![CDATA[活到老，学到老：Never too old to learn]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-06-30T12:10:50.845Z</updated>
+  <updated>2015-07-03T06:21:26.557Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Java之反射]]></title>
+    <link href="http://yoursite.com/2015/07/03/fanshe/"/>
+    <id>http://yoursite.com/2015/07/03/fanshe/</id>
+    <published>2015-07-03T06:17:02.000Z</published>
+    <updated>2015-07-03T06:21:26.557Z</updated>
+    <content type="html"><![CDATA[<p>最近心情真是低到了谷底，各种不顺，确实自己刚入股市，心态也有问题，能在股市行走的人一定是心态非常好的人，能够不以物喜，不以己悲，对于盈亏能够及时身退。最近的学习效率也是够低的。今天就总结一下Java的反射机制吧。学习好反射机制对于理解框架是很有意义的。<br>JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为java语言的反射机制。<br>Java反射机制主要提供了以下功能： </p>
+<ul>
+<li>在运行时判断任意一个对象所属的类；</li>
+<li>在运行时构造任意一个类的对象；</li>
+<li>在运行时判断任意一个类所具有的成员变量和方法；</li>
+<li>在运行时调用任意一个对象的方法；</li>
+<li>生成动态代理。<br>在 Java 中，主要由以下类来实现反射，这些类大多都位于 java.lang.reflect 包中。 Class (java.lang.Class<t>)：表示正在运行的 Java 应用程序中的类和接口。Field：代表类或接口的成员，及相关信息。Method：提供类或接口上单独某个方法（以及访问该方法）的信息。Constructor：提供关于类的单个构造方法的信息以及对它的访问权限。Array类：提供了动态创建和访问Java数组的方法。关于这些类的具体方法还是参考API文档吧。<br>下面看一段代码<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class Demo&#123;</span><br><span class="line">    //other codes...</span><br><span class="line">&#125;</span><br><span class="line">class hello&#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Class&lt;?&gt; demo1=null;</span><br><span class="line">        Class&lt;?&gt; demo2=null;</span><br><span class="line">        Class&lt;?&gt; demo3=null;</span><br><span class="line">        try&#123;</span><br><span class="line">            //一般尽量采用这种形式</span><br><span class="line">            demo1=Class.forName("Reflect.Demo");</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        demo2=new Demo().getClass();</span><br><span class="line">        demo3=Demo.class;</span><br><span class="line">        System.out.println("类名称   "+demo1.getName());</span><br><span class="line">        System.out.println("类名称   "+demo2.getName());</span><br><span class="line">        System.out.println("类名称   "+demo3.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</t></li>
+</ul>
+<p>这段简单的代码就是输出类的名称。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>最近心情真是低到了谷底，各种不顺，确实自己刚入股市，心态也有问题，能在股市行走的人一定是心态非常好的人，能够不以物喜，不以己悲，对于盈亏能够及时身退。最近的学习效率也是够低的。今天就总结一下Java的反射机制吧。学习好反射机制对于理解框架是很有意义的。<br>JAVA反射机]]>
+    </summary>
+    
+      <category term="编程" scheme="http://yoursite.com/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+      <category term="编程" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Java之抽象类和接口]]></title>
