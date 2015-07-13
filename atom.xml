@@ -4,7 +4,7 @@
   <subtitle><![CDATA[活到老，学到老：Never too old to learn]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-07-03T06:21:26.557Z</updated>
+  <updated>2015-07-13T09:14:18.120Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Java之注解]]></title>
+    <link href="http://yoursite.com/2015/07/13/zhujie/"/>
+    <id>http://yoursite.com/2015/07/13/zhujie/</id>
+    <published>2015-07-13T09:11:00.000Z</published>
+    <updated>2015-07-13T09:14:18.120Z</updated>
+    <content type="html"><![CDATA[<p>我们在编程时会经常看到@Override，@Deprecate这样的代码，这就是Java注解的内容。<br>Java 注解，从名字上看是注释，解释。但功能却不仅仅是注释（注释是对程序代码的补充说明，编译运行时会自动忽略）那么简单。注解（Annotation）为我们在代码中添加信息提供了一种形式化的方法，是我们可以在稍后某个时刻方便地使用这些数据（通过解析注解来使用这些数据）。包java.lang.annotation中包含所有定义自定义注解所需用到的原注解和接口。注解的作用如下：</p>
+<ul>
+<li>生成文档。这是最常见的，也是java最早提供的注解。常用的有@see,@param,@return 等；</li>
+<li>跟踪代码依赖性，实现替代配置文件功能。比较常见的是spring2.5开始的基于注解配置。作用就是减少配置。现在的框架基本都使用了这种配置来减少配置文件的数量；</li>
+<li>在编译时进行格式检查。如@Override放在方法前，如果你这个方法并不是覆盖了超类方法，则编译时就能检查出；<br>常见的注解有：<br>内建注解：<br>@Deprecated：将该项标记为过时的。<br>@SuppressWarnings：阻止某个/某些给定类型的警告信息<br>@Override： 检查该方法是否覆盖了某个超类的方法。（只能修饰方法，不能修饰变量和对象）<br>元注解：<br>@Target： 指定可以使用这个注解的那些内容<br>@Retention： 指定这个注解可以保留多久<br>@Documented： 指定这个注解应该包含在注解项的文档中<br>@Inherited： 指定一个注解，作用在父类时，能够自动被子类继承<br>注解的语法：<br>注解是通过注解接口来定义的：<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">modifiers <span class="variable">@interface</span> <span class="constant">AnnotationName</span> &#123;</span><br><span class="line">    type elementName() [default value ];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>例如：<br><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.tmser.annotation;</span><br><span class="line"><span class="keyword">public</span> @<span class="class"><span class="keyword">interface</span> <span class="title">TestA</span> </span>&#123;</span><br><span class="line">     <span class="comment">//这里定义了一个空的注解，它能干什么呢。我也不知道，但他能用。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>我们在编程时会经常看到@Override，@Deprecate这样的代码，这就是Java注解的内容。<br>Java 注解，从名字上看是注释，解释。但功能却不仅仅是注释（注释是对程序代码的补充说明，编译运行时会自动忽略）那么简单。注解（Annotation）为我们在代码中添]]>
+    </summary>
+    
+      <category term="编程" scheme="http://yoursite.com/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+      <category term="编程" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Java之反射]]></title>
