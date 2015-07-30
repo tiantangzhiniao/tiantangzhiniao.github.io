@@ -1,0 +1,393 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Java之多线程 | Leo&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Yu Le">
+    
+    <meta name="description" content="由于7月中旬去了一趟大西北玩了10几天，因此学习也就此耽搁了一段时间，下面也要开始找工作了，所以这段时间会好好的静下心来学习和总结。今天总结一下Java中的多线程的详细内容。
+
+进程和线程的区别：
+进程都对应着操作系统中当中应用程序的一个执行实例。具有动态性，并发性，独立性。
+线程是进程内部的一个执">
+    
+    
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Leo&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Leo&#39;s blog" title="Leo&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Leo&#39;s blog">Leo&#39;s blog</a></h1>
+				<h2 class="blog-motto">活到老，学到老：Never too old to learn</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/30/xiancheng/" title="Java之多线程" itemprop="url">Java之多线程</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-07-30T09:22:58.000Z" itemprop="datePublished">2015-07-30</time>
+    更新日期:<time datetime="2015-07-30T09:26:24.291Z" itemprop="dateModified">2015-07-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		</div>
+		
+		<p>由于7月中旬去了一趟大西北玩了10几天，因此学习也就此耽搁了一段时间，下面也要开始找工作了，所以这段时间会好好的静下心来学习和总结。今天总结一下Java中的多线程的详细内容。</p>
+<ol>
+<li>进程和线程的区别：<ul>
+<li>进程都对应着操作系统中当中应用程序的一个执行实例。具有动态性，并发性，独立性。</li>
+<li>线程是进程内部的一个执行单元，是程序中的一个单一的顺序控制流程。</li>
+<li>一个进程可以拥有多个线程，而一个线程至少要有一个父进程。</li>
+<li>线程可以有自己的堆栈，程序计数器和局部变量。</li>
+<li>线程与父进程的其他线程共享进程的所有全部资源。</li>
+<li>进程是独立运行的，采用抢占方式。</li>
+<li>一个线程可以创建删除另一个线程。同一进程中的多个线程可以并发执行。线程的调度管理由进程完成的。</li>
+</ul>
+</li>
+<li>创建线程的方式<br>Java中要创建的所有线程都是java.lang.Thread类或者其子类的一个实例。定义一个线程：<ol>
+<li>继承Thread 类，定义Thread的子类，重写父类的run()方法</li>
+<li>创建Thread子类的对象</li>
+<li>调用start（）方法启动该线程。（作用是使操作系统初始化一个新的线程，由这个新的线程来执行线程对象的run方法）<br>或者使用定义runnable接口的实现类（可以解决多线程的继承问题）</li>
+</ol>
+</li>
+<li>线程的生命周期<br>线程的生命周期类似于进程的生命周期，包括：新建态，等待态，运行态，阻塞态，死亡态，他们的关系如下图：<br><img src="/picture/zhuangtai.png" alt=""><br>线程中的比较重要的方法：join（）方法：当前线程被挂起，join进来的线程没有执行完毕之前，会一直阻塞当前线程。sleep（）方法：当前线程调用sleep方法被挂起，进入阻塞态一段时间，释放系统资源。main（）方法启动时，就会创建当前Java程序的主线程。</li>
+<li>线程同步<br>如果一个资源被多个线程使用，不上锁会造成数据读取严重错误。如果想让当前资源被一个线程使用时，不会受到其他线程影响，应该给当前资源上锁，Java中使用synchronized关键字保证数据同步。下面以一段银行取款的典型代码示例一下：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">//定义线程类</span><br><span class="line">public class TestAccount implements Runnable &#123;</span><br><span class="line">	private Account acct=new Account();</span><br><span class="line"></span><br><span class="line">	public void run() &#123;</span><br><span class="line">		// TODO Auto-generated method stub</span><br><span class="line">		for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">			makeWithdrawal(100);</span><br><span class="line">			if(acct.getbalance()&lt;0)&#123;</span><br><span class="line">				System.out.println("账号透支了");</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	//取款方法</span><br><span class="line">	private synchronized void makeWithdrawal(int amount) &#123;</span><br><span class="line">		if(acct.getbalance()&gt;=amount)&#123;</span><br><span class="line">			System.out.println(Thread.currentThread().getName()+"准备取款");</span><br><span class="line">			try &#123;</span><br><span class="line">				Thread.sleep(500);</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO: handle exception</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			acct.withDraw(amount);</span><br><span class="line">			System.out.println(Thread.currentThread().getName()+"取款成功");</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			System.out.println("余额不足以支付"+Thread.currentThread().getName()+"的取款，余额为："+acct.getbalance());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//测试线程类</span><br><span class="line">public class TestWithDrawal &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		// TODO Auto-generated method stub</span><br><span class="line">		TestAccount ta=new TestAccount();</span><br><span class="line">		Thread san=new Thread(ta);</span><br><span class="line">		Thread san_wife=new Thread(ta);</span><br><span class="line">		san.setName("张三");</span><br><span class="line">		san_wife.setName("张三的老婆");</span><br><span class="line">		san.start();</span><br><span class="line">		san_wife.start();</span><br><span class="line">	&#125;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面的这段代码makeWithdrawal（）要是不加锁synchronized则会出现银行卡透支的情况，因为会出现张三取款了而数据没有更新前，张三的老婆又取款了，所以会出现线程同步问题。上面的上锁还可以改成用同步代码的方式：<code>private  void makeWithdrawal(int amount) {synchronized(acct);省略的代码}</code>。<br>同步方法与同步代码块的区别：<br>同步方法是通过this关键字找到当前的对象，将当前对象上锁。<br>同步代码块可以指定任意一个对象。它可以控制的更具体。</p>
+<ol>
+<li>线程通信<br>还是以一段典型的生产者消费者代码讲述一下线程通信方法的使用<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">//定义产品类</span><br><span class="line">public class ShareData &#123;</span><br><span class="line">	private char c;   //代表产品</span><br><span class="line">	private boolean isProduced;</span><br><span class="line">	public synchronized void putShareChar(char c) &#123;</span><br><span class="line">		if(isProduced)&#123;</span><br><span class="line">			System.out.println("消费者还未消费，因此生产者停止生产");</span><br><span class="line">			try &#123;</span><br><span class="line">				wait();</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO: handle exception</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		this.c=c;</span><br><span class="line">		isProduced=true;</span><br><span class="line">		notify();</span><br><span class="line">		System.out.println("生产了产品"+ c);</span><br><span class="line">	&#125;</span><br><span class="line">	public synchronized char getShareChar() &#123;</span><br><span class="line">		if(!isProduced)&#123;</span><br><span class="line">			System.out.println("生产者还未生产，因此消费者停止消费");</span><br><span class="line">			try &#123;</span><br><span class="line">				wait();</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO: handle exception</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;			</span><br><span class="line">		isProduced=false;</span><br><span class="line">		notify();</span><br><span class="line">		return c;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//生产者类</span><br><span class="line">public class Producer extends Thread &#123;</span><br><span class="line">	private ShareData s;</span><br><span class="line">	Producer(ShareData s)&#123;</span><br><span class="line">		this.s=s;</span><br><span class="line">	&#125;</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		for (char c = 'A'; c &lt;='D'; c++) &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				Thread.sleep((int) (Math.random()*3000));</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO: handle exception</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			s.putShareChar(c);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//消费者类</span><br><span class="line">public class Consumer extends Thread &#123;</span><br><span class="line">	private ShareData s;</span><br><span class="line">	Consumer(ShareData s)&#123;</span><br><span class="line">		this.s=s;</span><br><span class="line">	&#125;</span><br><span class="line">	public void run() &#123;</span><br><span class="line">		char ch=0;</span><br><span class="line">		do &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				Thread.sleep(1000);</span><br><span class="line">			&#125; catch (InterruptedException e) &#123;</span><br><span class="line">				// TODO: handle exception</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">			ch=s.getShareChar();</span><br><span class="line">			</span><br><span class="line">		&#125; while (ch!='D');</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">//线程通信测试类</span><br><span class="line">public class Communication &#123;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		// TODO Auto-generated method stub</span><br><span class="line">		ShareData s=new ShareData();</span><br><span class="line">		new Producer(s).start();		</span><br><span class="line">		new Consumer(s).start();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上述的生产者消费者问题用到了线程中的所有知识，包括通信的方法notify()，wait()方法，线程同步问题，线程阻塞sleep（）方法。<br>最后推荐一个非常好的电脑记笔记的软件印象笔记，非常好用，功能也非常强大，关键是跨平台的。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/编程/">编程</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/07/30/xiancheng/" data-title="Java之多线程 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/07/13/zhujie/"  title="Java之注解">
+ <strong>NEXT:</strong><br/> 
+ <span>Java之注解
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android/" title="Android">Android<sup>3</sup></a></li>
+		
+			<li><a href="/categories/IM/" title="IM">IM<sup>1</sup></a></li>
+		
+			<li><a href="/categories/建博客/" title="建博客">建博客<sup>1</sup></a></li>
+		
+			<li><a href="/categories/旅行/" title="旅行">旅行<sup>1</sup></a></li>
+		
+			<li><a href="/categories/编程/" title="编程">编程<sup>6</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Android/" title="Android">Android<sup>3</sup></a></li>
+		
+			<li><a href="/tags/IM/" title="IM">IM<sup>1</sup></a></li>
+		
+			<li><a href="/tags/建博客/" title="建博客">建博客<sup>1</sup></a></li>
+		
+			<li><a href="/tags/旅行/" title="旅行">旅行<sup>1</sup></a></li>
+		
+			<li><a href="/tags/编程/" title="编程">编程<sup>6</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://zipperary.com/" title="Zippera's Blog">Zippera</a></li>
+      <li><a href="http://linjiangxian998.com/" title="linjiangxian's Blog">linjiangxian</a></li>
+      <li><a href="http://xiaoshiguang10.com/" title="Gavin's Blog">Gavin</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <iframe width="100%" height="500" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=500&fansRow=1&ptype=1&speed=0&skin=3&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=2866730235&verifier=54b15f04&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m a graduate student in hhu. <br/>
+			This is my blog. I want to share everything with you.</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://yoursite.com" target="_blank" title="Yu Le">Yu Le</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>
