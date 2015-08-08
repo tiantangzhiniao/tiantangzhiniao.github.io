@@ -1,0 +1,366 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Java之自动内存管理机制 | Leo&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Yu Le">
+    
+    <meta name="description" content="最近一直在忙填补之前Java挖下的大坑，一直在看《深入理解Java虚拟机》，对Java的内存模型和虚拟机JVM管理也终于明白了。今天先总结一下自动内存管理机制。   Java和c++之间有一堵由内存动态分配和垃圾收集技术所围成的高墙，墙外的人想进去，而墙内的人却想出来。对于Java程序员来说，在虚拟">
+    
+    
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Leo&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Leo&#39;s blog" title="Leo&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Leo&#39;s blog">Leo&#39;s blog</a></h1>
+				<h2 class="blog-motto">活到老，学到老：Never too old to learn</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/08/jvm-1/" title="Java之自动内存管理机制" itemprop="url">Java之自动内存管理机制</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-08-08T08:37:37.000Z" itemprop="datePublished">2015-08-08</time>
+    更新日期:<time datetime="2015-08-08T08:43:55.026Z" itemprop="dateModified">2015-08-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#JVM内存区域"><span class="toc-number">1.</span> <span class="toc-text">JVM内存区域</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#程序计数器"><span class="toc-number">1.1.</span> <span class="toc-text">程序计数器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Java虚拟机栈"><span class="toc-number">1.2.</span> <span class="toc-text">Java虚拟机栈</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#本地方法栈"><span class="toc-number">1.3.</span> <span class="toc-text">本地方法栈</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Java堆"><span class="toc-number">1.4.</span> <span class="toc-text">Java堆</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#方法区"><span class="toc-number">1.5.</span> <span class="toc-text">方法区</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#运行时常量池"><span class="toc-number">1.6.</span> <span class="toc-text">运行时常量池</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对象访问"><span class="toc-number">2.</span> <span class="toc-text">对象访问</span></a></li></ol>
+		</div>
+		
+		<p>   最近一直在忙填补之前Java挖下的大坑，一直在看《深入理解Java虚拟机》，对Java的内存模型和虚拟机JVM管理也终于明白了。今天先总结一下自动内存管理机制。<br>   Java和c++之间有一堵由内存动态分配和垃圾收集技术所围成的高墙，墙外的人想进去，而墙内的人却想出来。对于Java程序员来说，在虚拟机的自动内存管理机制的帮助下，不再需要像c++那样为每一个new操作去写配对的delete/free代码，而且不容易出现内存泄漏和内存溢出问题。不过也正因为Java程序员把内存控制的权利交给了Java虚拟机，一旦出现内存泄漏和溢出方面的问题，如果不了解虚拟机是怎样使用内存的，那排除错误会成为一项异常简单的工作。</p>
+<ol>
+<li><h4 id="JVM内存区域">JVM内存区域</h4>JVM在执行Java程序的过程中会把它所管理的内存划分为若干个不同的数据区域。这些区域都有各自的用途，以及创建和销毁的时间，结构图如下所示：<br><img src="/picture/jvm2-1.jpg" alt=""><h5 id="程序计数器">程序计数器</h5>程序计数器是一块较小的内存空间，它的作用可以看作是当前线程所执行的字节码的行号指示器。在虚拟机的概念模型中，字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常等基础功能都需要依赖这个计器来完成。<br>JVM的多线程是通过线程轮流切换并分配处理器执行时间的方式来实现的，因为为了线程切换后能恢复到正确的执行位置每条线程都需要一个独立的程序计数器，因此应该为<strong>“线程私有”的内存</strong>。此区域是无论任何情况下都不会发生outofmemoryerror情况的区域。<h5 id="Java虚拟机栈">Java虚拟机栈</h5>Java栈也称作虚拟机栈（Java Vitual Machine Stack），也就是我们常常所说的栈，跟C语言的数据段中的栈类似，<strong>是线程私有的，生命周期与线程相同</strong>。事实上，Java栈是Java方法执行的内存模型。为什么这么说呢？下面就来解释一下其中的原因。<br>Java栈中存放的是一个个的栈帧，每个栈帧对应一个被调用的方法，在栈帧中包括局部变量表(Local Variables)、操作数栈(Operand Stack)、指向当前方法所属的类的运行时常量池（运行时常量池的概念在方法区部分会谈到）的引用(Reference to runtime constant pool)、方法返回地址(Return Address)和一些额外的附加信息。当线程执行一个方法时，就会随之创建一个对应的栈帧，并将建立的栈帧压栈。当方法执行完毕之后，便会将栈帧出栈。因此可知，线程当前执行的方法所对应的栈帧必定位于Java栈的顶部。讲到这里，大家就应该会明白为什么 在 使用 递归方法的时候容易导致栈内存溢出的现象了以及为什么栈区的空间不用程序员去管理了（当然在Java中，程序员基本不用关系到内存分配和释放的事情，因为Java有自己的垃圾回收机制），这部分空间的分配和释放都是由系统自动实施的。对于所有的程序设计语言来说，栈这部分空间对程序员来说是不透明的。<br><img src="/picture/jvm2-2.jpg" alt=""><br>局部变量表，顾名思义，想必不用解释大家应该明白它的作用了吧。就是用来存储方法中的局部变量（包括在方法中声明的非静态变量以及函数形参）。对于基本数据类型的变量，则直接存储它的值，对于引用类型的变量，则存的是指向对象的引用或者是句柄。局部变量表的大小在编译器就可以确定其大小了，因此在程序执行期间局部变量表的大小是不会改变的。<br>操作数栈，想必学过数据结构中的栈的朋友想必对表达式求值问题不会陌生，栈最典型的一个应用就是用来对表达式求值。想想一个线程执行方法的过程中，实际上就是不断执行语句的过程，而归根到底就是进行计算的过程。因此可以这么说，程序中的所有计算过程都是在借助于操作数栈来完成的。<br>指向运行时常量池的引用，因为在方法执行的过程中有可能需要用到类中的常量，所以必须要有一个引用指向运行时常量。<br>方法返回地址，当一个方法执行完毕之后，要返回之前调用它的地方，因此在栈帧中必须保存一个方法返回地址。<br>由于每个线程正在执行的方法可能不同，因此每个线程都会有一个自己的Java栈，互不干扰。<h5 id="本地方法栈">本地方法栈</h5>与虚拟机栈发挥的作用非常相似，区别不过是虚拟机栈为虚拟机执行Java方法（也就是字节码）服务，而本地方法栈则是为虚拟机使用到的Native方法服务。而有的虚拟机已经将他们合二为一了。<h5 id="Java堆">Java堆</h5>Java堆一块被所有<strong>线程共享</strong>的一块内存区域，<strong>在虚拟机启动时创建，此区域的唯一目的就是存放对象实例</strong>，几乎所有的对象实例都在这里分配内存。<br>Java堆是垃圾收集器管理的主要区域，因此也被叫做GC堆（garbage collected heap）。如果从内存回收的角度看，由于现在收集器基本都是采用的分代收集算法，所以Java堆中还可以细分为：新生代和老年代；再细致一点，新生代划分为Eden空间、From Survivor空间、To Survivor空间等。无论如何划分，都与存放内容无关，无论哪个区域，都是存放对象实例。划分的目的是为了更好的回收内存或者更快的分配内存。Java堆可以处于物理上不连续的内存空间中，只要逻辑上连续即可。<h5 id="方法区">方法区</h5>方法区也是各个<strong>线程共享</strong>的内存区域，用于存放已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。<br>在JVM规范中，没有强制要求方法区必须实现垃圾回收。很多人习惯将方法区称为“永久代”，是因为HotSpot虚拟机以永久代来实现方法区，从而JVM的垃圾收集器可以像管理堆区一样管理这部分区域，从而不需要专门为这部分设计垃圾回收机制。不过自从JDK7之后，Hotspot虚拟机便将运行时常量池从永久代移除了。<h5 id="运行时常量池">运行时常量池</h5>该区域是方法区的一部分。在Class文件中除了类的字段、方法、接口等描述信息外，还有一项信息是常量池，用来存储编译期间生成的字面量和符号引用。<br>运行时常量池是每一个类或接口的常量池的运行时表示形式，在类和接口被加载到JVM后，对应的运行时常量池就被创建出来。当然并非Class文件常量池中的内容才能进入运行时常量池，在运行期间也可将新的常量放入运行时常量池中，比如String的intern（）方法。</li>
+<li><h4 id="对象访问">对象访问</h4>在Java语言中，对象访问是如何进行的？<br>对象访问会涉及Java栈、Java堆、方法区这三个最重要内存区域之间的关联关系，如这条代码<code>Object obj = new Objetc()</code>。假设这句代码出现在方法体中，那么<code>Object obj</code>这部分的语义将会反映到Java栈的本地变量表中，作为一个reference类型数据出现。而<code>new Object()</code>这部分的语义将会反映到Java堆中，形成一块存储了Object类型所有实例数据值的结构化内存。另外，在Java堆中，还必须包含能查找到此对象类型数据（如对象类型、父类、实现的接口、方法等）的地址信息，这些类型数据则存储在方法区中。<br>由于reference类型在Java虚拟机规范里面只规定了一个指向对象的引用，并没有定义这个引用应该通过哪种方式去定位，以及访问到Java堆中对象的具体位置，因此不同虚拟机实现有两种不同的方式，主流的有两种：使用句柄和直接指针。<br>如果使用句柄访问方式，Java堆中将会划出一块作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据和类型数据各自的具体地址信息：<br><img src="/picture/jvm2-3.png" alt=""><br>如果使用直接指针访问方式，Java堆对象的布局中必须考虑如何放置访问类型数据的相关信息，reference中直接存储的就是对象地址。<br><img src="/picture/jvm2-4.png" alt=""><br>这两种对象访问的方式各有优势，使用句柄的最大好处就是reference中存储的是稳定的句柄地址，在对象被移动时只会改变句柄中的实例数据指针，而reference本身不需要被修改。<br>使用直接指针访问方式最大好处就是速度更快，它节省了一次指针定位的时间开销，由于对象的访问在Java中非常频繁，因此这类开销积少成多后也是非常可观的执行成本。</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/编程/">编程</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/08/08/jvm-1/" data-title="Java之自动内存管理机制 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/08/01/daxibei/"  title="大西北之行">
+ <strong>NEXT:</strong><br/> 
+ <span>大西北之行
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#JVM内存区域"><span class="toc-number">1.</span> <span class="toc-text">JVM内存区域</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#程序计数器"><span class="toc-number">1.1.</span> <span class="toc-text">程序计数器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Java虚拟机栈"><span class="toc-number">1.2.</span> <span class="toc-text">Java虚拟机栈</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#本地方法栈"><span class="toc-number">1.3.</span> <span class="toc-text">本地方法栈</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Java堆"><span class="toc-number">1.4.</span> <span class="toc-text">Java堆</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#方法区"><span class="toc-number">1.5.</span> <span class="toc-text">方法区</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#运行时常量池"><span class="toc-number">1.6.</span> <span class="toc-text">运行时常量池</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#对象访问"><span class="toc-number">2.</span> <span class="toc-text">对象访问</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android/" title="Android">Android<sup>3</sup></a></li>
+		
+			<li><a href="/categories/IM/" title="IM">IM<sup>1</sup></a></li>
+		
+			<li><a href="/categories/建博客/" title="建博客">建博客<sup>1</sup></a></li>
+		
+			<li><a href="/categories/旅行/" title="旅行">旅行<sup>2</sup></a></li>
+		
+			<li><a href="/categories/编程/" title="编程">编程<sup>7</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Android/" title="Android">Android<sup>3</sup></a></li>
+		
+			<li><a href="/tags/IM/" title="IM">IM<sup>1</sup></a></li>
+		
+			<li><a href="/tags/建博客/" title="建博客">建博客<sup>1</sup></a></li>
+		
+			<li><a href="/tags/旅行/" title="旅行">旅行<sup>2</sup></a></li>
+		
+			<li><a href="/tags/编程/" title="编程">编程<sup>7</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://zipperary.com/" title="Zippera's Blog">Zippera</a></li>
+      <li><a href="http://linjiangxian998.com/" title="linjiangxian's Blog">linjiangxian</a></li>
+      <li><a href="http://xiaoshiguang10.com/" title="Gavin's Blog">Gavin</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <iframe width="100%" height="500" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=500&fansRow=1&ptype=1&speed=0&skin=3&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=2866730235&verifier=54b15f04&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m a graduate student in hhu. <br/>
+			This is my blog. I want to share everything with you.</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://yoursite.com" target="_blank" title="Yu Le">Yu Le</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+  </body>
+</html>
