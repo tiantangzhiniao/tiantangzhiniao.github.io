@@ -1,0 +1,414 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Java之垃圾收集器与内存分配策略 | Leo&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Yu Le">
+    
+    <meta name="description" content="我们在上一篇中介绍了Java内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈三个区域随线程而生而灭；栈中的栈帧随着方法的进入和退出而有条不紊的执行着出栈和入栈操作。每一个栈帧分配多少内存基本上在类结构确定下来时就已知的，这几个区域的内存分配和回收都具有确定性，这这几个区域不需要过多考虑">
+    
+    
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Leo&#39;s blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Leo&#39;s blog" title="Leo&#39;s blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Leo&#39;s blog">Leo&#39;s blog</a></h1>
+				<h2 class="blog-motto">活到老，学到老：Never too old to learn</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/10/jvm-2/" title="Java之垃圾收集器与内存分配策略" itemprop="url">Java之垃圾收集器与内存分配策略</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-08-10T15:08:04.000Z" itemprop="datePublished">2015-08-10</time>
+    更新日期:<time datetime="2015-08-10T15:26:20.290Z" itemprop="dateModified">2015-08-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#判断对象已死的方法"><span class="toc-number">1.</span> <span class="toc-text">判断对象已死的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#引用计数法"><span class="toc-number">1.1.</span> <span class="toc-text">引用计数法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#根搜索算法"><span class="toc-number">1.2.</span> <span class="toc-text">根搜索算法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#垃圾收集算法"><span class="toc-number">2.</span> <span class="toc-text">垃圾收集算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#标记-清除算法(Mark-Sweep)"><span class="toc-number">2.1.</span> <span class="toc-text">标记-清除算法(Mark-Sweep)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#复制算法"><span class="toc-number">2.2.</span> <span class="toc-text">复制算法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#新生代"><span class="toc-number">2.3.</span> <span class="toc-text">新生代</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#老年代"><span class="toc-number">2.4.</span> <span class="toc-text">老年代</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#持久代"><span class="toc-number">2.5.</span> <span class="toc-text">持久代</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#标记-整理算法"><span class="toc-number">2.6.</span> <span class="toc-text">标记-整理算法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#分代收集算法"><span class="toc-number">2.7.</span> <span class="toc-text">分代收集算法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#垃圾收集器"><span class="toc-number">3.</span> <span class="toc-text">垃圾收集器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内存分配与回收策略"><span class="toc-number">4.</span> <span class="toc-text">内存分配与回收策略</span></a></li></ol>
+		</div>
+		
+		<p>我们在上一篇中介绍了Java内存运行时区域的各个部分，其中程序计数器、虚拟机栈、本地方法栈三个区域随线程而生而灭；栈中的栈帧随着方法的进入和退出而有条不紊的执行着出栈和入栈操作。每一个栈帧分配多少内存基本上在类结构确定下来时就已知的，这几个区域的内存分配和回收都具有确定性，这这几个区域不需要过多考虑回收的问题。<br>但Java堆和方法区就不一样了，这部分内存的分配和回收是动态的，垃圾收集器所关注的是这部分内存。</p>
+<ol>
+<li><h4 id="判断对象已死的方法">判断对象已死的方法</h4><h5 id="引用计数法">引用计数法</h5><p>引用计数是垃圾收集器中的早期策略。在这种方法中，堆中每个对象实例都有一个引用计数。当一个对象被创建时，且将该对象实例分配给一个变量，该变量计数设置为1。当任何其它变量被赋值为这个对象的引用时，计数加1(a = b,则b引用的对象实例的计数器+1)，但当一个对象实例的某个引用超过了生命周期或者被设置为一个新值时，对象实例的引用计数器减1。任何引用计数器为0的对象实例可以被当作垃圾收集。当一个对象实例被垃圾收集时，它引用的任何对象实例的引用计数器减1。<br>优点：引用计数收集器可以很快的执行，交织在程序运行中。对程序需要不被长时间打断的实时环境比较有利。<br>缺点：无法检测出循环引用。如父对象有一个对子对象的引用，子对象反过来引用父对象。这样，他们的引用计数永远不可能为0.<br>引用计数算法无法解决循环引用问题，例如：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">Main</span> &#123;</span></span><br><span class="line">    public static void main(<span class="constant">String</span>[] args) &#123;</span><br><span class="line">        <span class="constant">MyObject</span> object1 = new <span class="constant">MyObject</span>();</span><br><span class="line">        <span class="constant">MyObject</span> object2 = new <span class="constant">MyObject</span>();</span><br><span class="line"></span><br><span class="line">        object1.object = object2;</span><br><span class="line">        object2.object = object1;</span><br><span class="line"></span><br><span class="line">        object1 = null;</span><br><span class="line">        object2 = null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后面两句将object1和object2赋值为null，也就是说object1和object2指向的对象已经不可能再被访问，但是由于它们互相引用对方，导致它们的引用计数器都不为0，那么垃圾收集器就永远不会回收它们</p>
+<h5 id="根搜索算法">根搜索算法</h5><p>根搜索算法是从离散数学中的图论引入的，程序把所有的引用关系看作一张图，从一个节点GC ROOT开始，寻找对应的引用节点，找到这个节点以后，继续寻找这个节点的引用节点，当所有的引用节点寻找完毕之后，剩余的节点则被认为是没有被引用到的节点，即无用的节点。例如下图中的objD和objE即为无用结点，可以回收。<br><img src="/picture/jvm2-1.jpg" alt=""><br>java中可作为GC Root的对象有：</p>
+<ul>
+<li>虚拟机栈中引用的对象（本地变量表） </li>
+<li>方法区中静态属性引用的对象 </li>
+<li>方法区中常量引用的对象 </li>
+<li>本地方法栈中引用的对象（Native对象）</li>
+</ul>
+</li>
+<li><h4 id="垃圾收集算法">垃圾收集算法</h4><h5 id="标记-清除算法(Mark-Sweep)">标记-清除算法(Mark-Sweep)</h5>标记-清除算法采用从根集合进行扫描，对存活的对象进行标记，标记完毕后，再扫描整个空间中未被标记的对象，进行回收，如上图所示。标记-清除算法不需要进行对象的移动，并且仅对不存活的对象进行处理，在存活对象比较多的情况下极为高效，但由于标记-清除算法直接回收不存活的对象，因此会造成内存碎片。<br>该算法是最基础的收集算法，后续的收集算法都是基于这种思想并对其缺点进行改进得到的。它的主要缺点有两个：<br>效率问题，标记和清除过程的效率都不高<br>空间问题，标记清除之后会产生大量不连续的内存碎片，空间碎片太多可能会导致，当程序以后的运行过程中需要分配较大对象时无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。<h5 id="复制算法">复制算法</h5>该算法的提出是为了克服句柄的开销和解决堆碎片的垃圾回收。它开始时把堆分成 一个对象面和多个空闲面，程序从对象面为对象分配空间，当对象满了，基于copying算法的垃圾收集就从根集中扫描活动对象，并将每个活动对象复制到空闲面(使得活动对象所占的内存之间没有空闲洞)，这样空闲面变成了对象面，原来的对象面变成了空闲面，程序会在新的对象面中分配内存。<br>现在的商业虚拟机都采用这种收集算法来回收新生代，对于对象的各个时期的介绍如下<h5 id="新生代">新生代</h5><ul>
+<li>所有新生成的对象首先都是放在新生轻代的。新生代的目标就是尽可能快速的收集掉那些生命周期短的对象。</li>
+<li>新生代内存按照8:1:1的比例分为一个eden区和两个survivor(survivor0,survivor1)区。一个Eden区，两个Survivor区(一般而言)。大部分对象在Eden区中生成。回收时先将eden区存活对象复制到一个survivor0区，然后清空eden区，当这个survivor0区也存放满了时，则将eden区和survivor0区存活对象复制到另一个survivor1区，然后清空eden和这个survivor0区，此时survivor0区是空的，然后将survivor0区和survivor1区交换，即保持survivor1区为空，如此往复。</li>
+<li>当survivor1区不足以存放eden和survivor0的存活对象时，就将存活对象直接存放到老年代。（这里指的是老年代对其进行分配担保）</li>
+<li>新生代发生的GC也叫做MinorGC，MinorGC发生频率比较高(不一定等Eden区满了才触发) <h5 id="老年代">老年代</h5></li>
+<li>在年轻代中经历了N次垃圾回收后仍然存活的对象，就会被放到年老代中。因此，可以认为年老代中存放的都是一些生命周期较长的对象。</li>
+<li>内存比新生代也大很多(大概比例是1:2)，当老年代内存满时触发Major GC即Full GC，Full GC发生频率比较低，老年代对象存活时间比较长，存活率标记高。<h5 id="持久代">持久代</h5>用于存放静态文件，如Java类、方法等。持久代对垃圾回收没有显著影响，但是有些应用可能动态生成或者调用一些class，例如Hibernate等，在这种时候需要设置一个比较大的持久代空间来存放这些运行过程中新增的类。<h5 id="标记-整理算法">标记-整理算法</h5>标记-整理算法采用标记-清除算法一样的方式进行对象的标记，但在清除时不同，在回收不存活的对象占用的空间后，会将所有的存活对象往左端空闲空间移动，并更新对应的指针。标记-整理算法是在标记-清除算法的基础上，又进行了对象的移动，因此成本更高，但是却解决了内存碎片的问题。<h5 id="分代收集算法">分代收集算法</h5>分代的垃圾回收策略，是基于这样一个事实：<strong>不同的对象的生命周期是不一样</strong>的。因此，不同生命周期的对象可以采取不同的回收算法，以便提高回收效率。<br>当前的商业虚拟机的垃圾收集都采用“分代收集”算法，该算法并没有什么新的思想，只是根据对象的存活周期的不同将内存划分为几块。一般为新生代、老年代和永久代，这样就可以根据各个年代的特点采用最适当的收集算法。在新生代中，每次垃圾收集时都会有大批对象死去，那就选用复制算法。而老年代因为对象存活率高，而没有额外空间对它进行分配担保，必须采用“标记-清除”或者“标记-清理”算法。</li>
+</ul>
+</li>
+<li><h4 id="垃圾收集器">垃圾收集器</h4>如果说收集算法是内存回收的方法论，垃圾收集器就是内存回收的具体实现。<br>新生代收集器使用的收集器：Serial、PraNew、Parallel Scavenge<br>老年代收集器使用的收集器：Serial Old、Parallel Old、CMS<br><img src="/picture/jvm2-2.jpg" alt=""><br>Serial收集器（复制算法)：新生代单线程收集器，标记和清理都是单线程，优点是简单高效。<br>Serial Old收集器(标记-整理算法)：老年代单线程收集器，Serial收集器的老年代版本。<br>ParNew收集器(停止-复制算法)：新生代收集器，可以认为是Serial收集器的多线程版本,在多核CPU环境下有着比Serial更好的表现。<br>Parallel Scavenge收集器(停止-复制算法)：并行收集器，追求高吞吐量，高效利用CPU。吞吐量一般为99%， 吞吐量= 用户线程时间/(用户线程时间+GC线程时间)。适合后台应用等对交互相应要求不高的场景。<br>Parallel Old收集器(停止-复制算法)：Parallel Scavenge收集器的老年代版本，并行收集器，吞吐量优先<br>CMS(Concurrent Mark Sweep)收集器（标记-清理算法）：高并发、低停顿，追求最短GC回收停顿时间，cpu占用比较高，响应时间快，停顿时间短，多核cpu 追求高响应时间的选择。</li>
+<li><h4 id="内存分配与回收策略">内存分配与回收策略</h4>Java所提倡的自动内存管理最终可以归结为自动化的解决了两个问题：<strong>给对象分配内存以及回收分配给对象的内存。</strong>下面来讨论一下给对象分配内存的策略。下面是几条最普遍的内存分配规则：<ul>
+<li>对象优先在Eden分配：大多数情况下，对象在新生代Eden区中分配。当Eden区没有足够的空间进行分配的时候，虚拟机将发起一次Minor GC。</li>
+<li>大对象直接进入老年代：所谓大对象指的是需要大量连续内存空间的Java对象，最典型的的大对象就是那种很长的字符串及数组。</li>
+<li>长期存活的对象将进入老年代：虚拟机给每个对象定义了一个对象年龄计数器。如果对象在Eden每熬过一次Minor GC，年龄增加1，当年龄增加到一定成都，就会晋升到老年代中。</li>
+</ul>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/编程/">编程</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/08/10/jvm-2/" data-title="Java之垃圾收集器与内存分配策略 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/08/08/jvm-1/"  title="Java之自动内存管理机制">
+ <strong>NEXT:</strong><br/> 
+ <span>Java之自动内存管理机制
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#判断对象已死的方法"><span class="toc-number">1.</span> <span class="toc-text">判断对象已死的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#引用计数法"><span class="toc-number">1.1.</span> <span class="toc-text">引用计数法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#根搜索算法"><span class="toc-number">1.2.</span> <span class="toc-text">根搜索算法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#垃圾收集算法"><span class="toc-number">2.</span> <span class="toc-text">垃圾收集算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#标记-清除算法(Mark-Sweep)"><span class="toc-number">2.1.</span> <span class="toc-text">标记-清除算法(Mark-Sweep)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#复制算法"><span class="toc-number">2.2.</span> <span class="toc-text">复制算法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#新生代"><span class="toc-number">2.3.</span> <span class="toc-text">新生代</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#老年代"><span class="toc-number">2.4.</span> <span class="toc-text">老年代</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#持久代"><span class="toc-number">2.5.</span> <span class="toc-text">持久代</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#标记-整理算法"><span class="toc-number">2.6.</span> <span class="toc-text">标记-整理算法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#分代收集算法"><span class="toc-number">2.7.</span> <span class="toc-text">分代收集算法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#垃圾收集器"><span class="toc-number">3.</span> <span class="toc-text">垃圾收集器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内存分配与回收策略"><span class="toc-number">4.</span> <span class="toc-text">内存分配与回收策略</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android/" title="Android">Android<sup>3</sup></a></li>
+		
+			<li><a href="/categories/IM/" title="IM">IM<sup>1</sup></a></li>
+		
+			<li><a href="/categories/建博客/" title="建博客">建博客<sup>1</sup></a></li>
+		
+			<li><a href="/categories/旅行/" title="旅行">旅行<sup>2</sup></a></li>
+		
+			<li><a href="/categories/编程/" title="编程">编程<sup>8</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Android/" title="Android">Android<sup>3</sup></a></li>
+		
+			<li><a href="/tags/IM/" title="IM">IM<sup>1</sup></a></li>
+		
+			<li><a href="/tags/建博客/" title="建博客">建博客<sup>1</sup></a></li>
+		
+			<li><a href="/tags/旅行/" title="旅行">旅行<sup>2</sup></a></li>
+		
+			<li><a href="/tags/编程/" title="编程">编程<sup>8</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href="http://zipperary.com/" title="Zippera's Blog">Zippera</a></li>
+      <li><a href="http://linjiangxian998.com/" title="linjiangxian's Blog">linjiangxian</a></li>
+      <li><a href="http://xiaoshiguang10.com/" title="Gavin's Blog">Gavin</a></li>
+    </ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <iframe width="100%" height="500" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=500&fansRow=1&ptype=1&speed=0&skin=3&isTitle=1&noborder=1&isWeibo=1&isFans=0&uid=2866730235&verifier=54b15f04&dpc=1"></iframe>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m a graduate student in hhu. <br/>
+			This is my blog. I want to share everything with you.</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://yoursite.com" target="_blank" title="Yu Le">Yu Le</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"null"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'undefined', 'undefined');  
+ga('send', 'pageview');
+</script>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?df4a74e74e614b3baf0069b3b51440ab";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+
+
+  </body>
+</html>
