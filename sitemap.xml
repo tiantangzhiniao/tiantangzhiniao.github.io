@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2015/08/08/jvm-1/</loc>
+    <lastmod>2015-08-20T07:33:33.016Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2015/08/10/jvm-2/</loc>
     <lastmod>2015-08-12T14:58:32.677Z</lastmod>
   </url>
@@ -9,11 +14,6 @@
   <url>
     <loc>http://yoursite.com/2015/08/12/jvm3/</loc>
     <lastmod>2015-08-12T14:58:30.255Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2015/08/08/jvm-1/</loc>
-    <lastmod>2015-08-08T08:43:55.026Z</lastmod>
   </url>
   
   <url>
