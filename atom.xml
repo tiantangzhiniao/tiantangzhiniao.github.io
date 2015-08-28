@@ -4,7 +4,7 @@
   <subtitle><![CDATA[活到老，学到老：Never too old to learn]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://yoursite.com/"/>
-  <updated>2015-08-12T14:58:30.255Z</updated>
+  <updated>2015-08-28T07:44:28.053Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -13,6 +13,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[Hashtable HashMap 以及ConcurrentHashMap分析与比较]]></title>
+    <link href="http://yoursite.com/2015/08/28/utilities/"/>
+    <id>http://yoursite.com/2015/08/28/utilities/</id>
+    <published>2015-08-28T07:43:41.000Z</published>
+    <updated>2015-08-28T07:44:28.053Z</updated>
+    <content type="html"><![CDATA[<p>Hashtable是JDK 5之前Map唯一线程安全的内置实现（Collections.synchronizedMap不算）。Hashtable继承的是Dictionary（Hashtable是其唯一公开的子类），并不继承AbstractMap或者HashMap.尽管Hashtable和HashMap的结构非常类似，但是他们之间并没有多大联系。<br>ConcurrentHashMap是HashMap的线程安全版本，ConcurrentSkipListMap是TreeMap的线程安全版本。最终可用的线程安全版本Map实现是ConcurrentHashMap/ConcurrentSkipListMap/Hashtable/Properties四个，但是Hashtable是过时的类库，因此如果可以的应该尽可能的使用ConcurrentHashMap和ConcurrentSkipListMap.<br>Hashtable、HashMap异同：</p>
+<ol>
+<li>Hashtable是Dictionary的子类<br>代码如下:<br><code>public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Serializable</code><br>HashMap的代码<br><code>public class HashMap extends AbstractMap implements Map, Cloneable, Serializable</code><br>HashMap和Hashtable都是Map接口的一个实现类；</li>
+<li>Hashtable中的方法是同步的，即线程安全的，而HashMap中的方法在默认情况下不是同步的，即不是线程安全的。<br>也就是说，在多线程应用程序中，不用专门的操作就安全地可以使用Hashtable了；而对于HashMap，则需要额外的同步机制。但HashMap的同步问题可通过Collections的一个静态方法得到解决：<br><code>public static Map synchronizedMap(Map m)</code><br>这个方法返回一个同步的Map，也就是说返回的Map是线程安全的。</li>
+<li>在HashMap中，null可以作为键，这样的键只有一个；可以有一个或多个键所对应的值为null。<br>当get()方法返回null值时，即可以表示HashMap中没有该键，也可以表示该键所对应的值为null。因此，在HashMap中不能由get()方法来判断HashMap中是否存在某个键，而应该用containsKey()方法来判断。Hashtable的键值不能为null，否则：java.lang.NullPointerException 。</li>
+<li>HashTable使用Enumeration，HashMap使用Iterator。<br>以上只是表面的不同，它们的实现也有很大的不同。</li>
+<li>哈希值的使用不同，HashTable直接使用对象的hashCode，代码是这样的：<br><code>int hash = key.hashCode();
+int index = (hash &amp; 0x7FFFFFFF) % tab.length;</code><br>而HashMap重新计算hash值，而且用与代替求模，比如HashMap的put方法<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public <span class="constant">V</span> put(<span class="constant">K</span> key, <span class="constant">V</span> value) &#123;</span><br><span class="line">		<span class="keyword">if</span> (key == null)</span><br><span class="line">			<span class="keyword">return</span> putForNullKey(value);</span><br><span class="line">		int hash = hash(key.hashCode());</span><br><span class="line">		int i = indexFor(hash, table.length);</span><br><span class="line">		<span class="keyword">for</span> (<span class="constant">Entry</span> e = table[i]; e != null; e = e.<span class="keyword">next</span>) </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="constant">Object</span> k;</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">if</span> (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="constant">V</span> oldValue = e.value;</span><br><span class="line">			e.value = value;</span><br><span class="line">			e.recordAccess(this);</span><br><span class="line">			<span class="keyword">return</span> oldValue;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>总之，HashTable是多线程安全的，不需要人工同步，但性能方面会差一点；而HashMap不能直接用于多线程。而<br>ConcurrentHashMap的出现正解决上诉问题。它是HashMap的线程安全版本，性能方面也优于HashTable。ConcurrentSkipListMap是TreeMap的线程安全版本。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p>Hashtable是JDK 5之前Map唯一线程安全的内置实现（Collections.synchronizedMap不算）。Hashtable继承的是Dictionary（Hashtable是其唯一公开的子类），并不继承AbstractMap或者HashMap.尽管Has]]>
+    </summary>
+    
+      <category term="编程" scheme="http://yoursite.com/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+      <category term="编程" scheme="http://yoursite.com/categories/%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[JAVA之类加载机制]]></title>

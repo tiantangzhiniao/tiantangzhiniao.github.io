@@ -4,14 +4,12 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>大西北之行 | Leo&#39;s blog</title>
+    <title>Hashtable HashMap 以及ConcurrentHashMap分析与比较 | Leo&#39;s blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Yu Le">
     
-    <meta name="description" content="又到周末了，回来由于忙于实习和找工作的事情，一直没有时间总结一下我们欢乐的大西北之行，今天终于有时间来整理一下我们的大西北之行了，今天看了一下拍的照片，真是被大西北的美景陶醉了，被欢乐逗比的小伙伴逗乐了，被我们炫酷的造型帅呆了。
-
-行程安排西边之行好久之前就开始规划了，我们也在网上查了很多路线和攻略">
+    <meta name="description" content="Hashtable是JDK 5之前Map唯一线程安全的内置实现（Collections.synchronizedMap不算）。Hashtable继承的是Dictionary（Hashtable是其唯一公开的子类），并不继承AbstractMap或者HashMap.尽管Hashtable和HashMa">
     
     
     
@@ -71,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/08/01/daxibei/" title="大西北之行" itemprop="url">大西北之行</a>
+      <a href="/2015/08/28/utilities/" title="Hashtable HashMap 以及ConcurrentHashMap分析与比较" itemprop="url">Hashtable HashMap 以及ConcurrentHashMap分析与比较</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://yoursite.com" title="Yu Le">Yu Le</a>
     </p>
   <p class="article-time">
-    <time datetime="2015-08-01T05:05:13.000Z" itemprop="datePublished">2015-08-01</time>
-    更新日期:<time datetime="2015-08-01T09:10:28.299Z" itemprop="dateModified">2015-08-01</time>
+    <time datetime="2015-08-28T07:43:41.000Z" itemprop="datePublished">2015-08-28</time>
+    更新日期:<time datetime="2015-08-28T07:44:28.053Z" itemprop="dateModified">2015-08-28</time>
     
   </p>
 </header>
@@ -91,33 +89,37 @@
 		
 		</div>
 		
-		<p>   又到周末了，回来由于忙于实习和找工作的事情，一直没有时间总结一下我们欢乐的大西北之行，今天终于有时间来整理一下我们的大西北之行了，今天看了一下拍的照片，真是被大西北的美景陶醉了，被欢乐逗比的小伙伴逗乐了，被我们炫酷的造型帅呆了。</p>
+		<p>Hashtable是JDK 5之前Map唯一线程安全的内置实现（Collections.synchronizedMap不算）。Hashtable继承的是Dictionary（Hashtable是其唯一公开的子类），并不继承AbstractMap或者HashMap.尽管Hashtable和HashMap的结构非常类似，但是他们之间并没有多大联系。<br>ConcurrentHashMap是HashMap的线程安全版本，ConcurrentSkipListMap是TreeMap的线程安全版本。最终可用的线程安全版本Map实现是ConcurrentHashMap/ConcurrentSkipListMap/Hashtable/Properties四个，但是Hashtable是过时的类库，因此如果可以的应该尽可能的使用ConcurrentHashMap和ConcurrentSkipListMap.<br>Hashtable、HashMap异同：</p>
 <ol>
-<li>行程安排<br>西边之行好久之前就开始规划了，我们也在网上查了很多路线和攻略，最后我觉得我们路线还是很合理的，day1:日月山-青海湖-茶卡盐湖-宿黑马河；day2：黑马河日出-祁连-卓尔山；day3：张掖丹霞地貌和市区吃东西一天；day4：到达敦煌休息一天；day5：莫高窟（我们一路还是很顺利的，因为提前把一切都订好了，小伙伴们相当的给力，西边的7,8月是旅游旺季，啥都紧张，莫高窟因为要网上预订，门票被炒到600，原价200。所以建议去那边玩的，之前一定要所有的行程都规划好）和鸣沙山月牙泉。day6:雅丹魔鬼城-阳关-玉门关-汉长城-敦煌古城。day7：休息一天到达兰州；day8：兰州一天，然后返程。这就是我们大致的行程，之前有6个人的，但是由于小伙伴各种突发事情就剩4个人了。</li>
-<li>大西北的美景<br> 我不是一个吃货，所以就不晒大西北的美食了，但是大西北的美景确实让我留下了深刻印象。<br> <img src="/picture/11.JPG" alt=""><br> 大西北的天空，全年几乎都是蓝天白云，这是我们这边很难见到的<br> <img src="/picture/12.JPG" alt=""><br> 笔直的公路一直延伸，仿佛一直到天际<br> <img src="/picture/13.JPG" alt=""><br> 青海湖边成片美丽的油菜花，蔚为壮观<br> <img src="/picture/14.JPG" alt=""><br> 美丽的青海湖，如此清澈，大美青海<br> <img src="/picture/15.jpg" alt=""><br> 洁白如镜的天空之境茶卡盐湖<br> <img src="/picture/16.JPG" alt=""><br> 黑马河的日出前的青海湖，还有成群的鸭子结伴游行。<br> <img src="/picture/17.JPG" alt=""><br> 美丽壮观的丹霞地貌<br> <img src="/picture/18.JPG" alt=""><br> 壮丽的鸣沙山，成群的骆驼，自己也终于实现了在沙漠中骑骆驼的愿望<br> <img src="/picture/19.jpg" alt=""><br> 让人叹为观止的莫高窟，令人赞叹的古代艺术<br> <img src="/picture/20.JPG" alt=""><br> 沙漠中美丽的月牙泉，好美啊！</li>
-<li>一群逗比的小伙伴<br>愉快的旅行当然少不了这群逗比小伙伴，虽然一路上被黑的好惨好惨，被秀恩爱虐的心碎，但是但是玩的还是相当相当的开心，相处的无比融洽。上几张我们合照<br><img src="/picture/21.jpg" alt=""><br>我就是传说中的蒙面大侠<br><img src="/picture/22.jpg" alt=""><br><img src="/picture/23.jpg" alt=""><br>就是这么拽<br><img src="/picture/24.jpg" alt=""><br>萌萌哒的陈老师<br><img src="/picture/25.jpg" alt=""><br>我就是专业的背景</li>
-<li>令人难忘的西北行<br>每一次的旅行总会让我接触到不同于我们日常生活的景色，环境和人物，体验了不一样的世界，这就是旅行的意义所在吧。这一次的西北之行，美丽的青海湖，黑马河日出，天空之境茶卡盐湖，壮观的丹霞地貌，令人叹为观止的莫高窟艺术，刺激的鸣沙山月牙泉，都让我印象深刻。<br><img src="/picture/26.JPG" alt=""><br><img src="/picture/27.JPG" alt=""><br><img src="/picture/28.JPG" alt=""><br><img src="/picture/29.JPG" alt=""><br>当然最深刻在我的脑海里的还是这群逗比的小伙伴，虽然我的优雅的睡姿，霸气的口头禅，高超的摄影技术被他们黑的体无完肤，本身也晒得黑成狗了，但是我们玩的真是非常非常非常的开心。就让我们的笑声回荡在西边美丽的天空吧，我们就带走美好的记忆和美丽的风光。希望我们有机会还能一起出去，一起疯狂，一起欢声笑语。大西北，再见咯，记住我们曾经来过，这里有我们留下的足迹。<br><img src="/picture/30.JPG" alt=""></li>
+<li>Hashtable是Dictionary的子类<br>代码如下:<br><code>public class Hashtable extends Dictionary implements Map, Cloneable, java.io.Serializable</code><br>HashMap的代码<br><code>public class HashMap extends AbstractMap implements Map, Cloneable, Serializable</code><br>HashMap和Hashtable都是Map接口的一个实现类；</li>
+<li>Hashtable中的方法是同步的，即线程安全的，而HashMap中的方法在默认情况下不是同步的，即不是线程安全的。<br>也就是说，在多线程应用程序中，不用专门的操作就安全地可以使用Hashtable了；而对于HashMap，则需要额外的同步机制。但HashMap的同步问题可通过Collections的一个静态方法得到解决：<br><code>public static Map synchronizedMap(Map m)</code><br>这个方法返回一个同步的Map，也就是说返回的Map是线程安全的。</li>
+<li>在HashMap中，null可以作为键，这样的键只有一个；可以有一个或多个键所对应的值为null。<br>当get()方法返回null值时，即可以表示HashMap中没有该键，也可以表示该键所对应的值为null。因此，在HashMap中不能由get()方法来判断HashMap中是否存在某个键，而应该用containsKey()方法来判断。Hashtable的键值不能为null，否则：java.lang.NullPointerException 。</li>
+<li>HashTable使用Enumeration，HashMap使用Iterator。<br>以上只是表面的不同，它们的实现也有很大的不同。</li>
+<li>哈希值的使用不同，HashTable直接使用对象的hashCode，代码是这样的：<br><code>int hash = key.hashCode();
+int index = (hash &amp; 0x7FFFFFFF) % tab.length;</code><br>而HashMap重新计算hash值，而且用与代替求模，比如HashMap的put方法<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public <span class="constant">V</span> put(<span class="constant">K</span> key, <span class="constant">V</span> value) &#123;</span><br><span class="line">		<span class="keyword">if</span> (key == null)</span><br><span class="line">			<span class="keyword">return</span> putForNullKey(value);</span><br><span class="line">		int hash = hash(key.hashCode());</span><br><span class="line">		int i = indexFor(hash, table.length);</span><br><span class="line">		<span class="keyword">for</span> (<span class="constant">Entry</span> e = table[i]; e != null; e = e.<span class="keyword">next</span>) </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="constant">Object</span> k;</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">if</span> (e.hash == hash &amp;&amp; ((k = e.key) == key || key.equals(k))) </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="constant">V</span> oldValue = e.value;</span><br><span class="line">			e.value = value;</span><br><span class="line">			e.recordAccess(this);</span><br><span class="line">			<span class="keyword">return</span> oldValue;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+</li>
 </ol>
+<p>总之，HashTable是多线程安全的，不需要人工同步，但性能方面会差一点；而HashMap不能直接用于多线程。而<br>ConcurrentHashMap的出现正解决上诉问题。它是HashMap的线程安全版本，性能方面也优于HashTable。ConcurrentSkipListMap是TreeMap的线程安全版本。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/旅行/">旅行</a>
+  <span></span> <a href="/tags/编程/">编程</a>
   </div>
 
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/旅行/">旅行</a>
+  <a class="article-category-link" href="/categories/编程/">编程</a>
 </div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://yoursite.com/2015/08/01/daxibei/" data-title="大西北之行 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
+  <div data-url="http://yoursite.com/2015/08/28/utilities/" data-title="Hashtable HashMap 以及ConcurrentHashMap分析与比较 | Leo&#39;s blog" data-tsina="守望basketball" class="share clearfix">
   </div>
 
 </div>
@@ -126,19 +128,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/08/08/jvm-1/" title="Java之自动内存管理机制">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  Java之自动内存管理机制</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/07/30/xiancheng/"  title="Java之多线程">
+<a href="/2015/08/12/jvm3/"  title="JAVA之类加载机制">
  <strong>NEXT:</strong><br/> 
- <span>Java之多线程
+ <span>JAVA之类加载机制
 </span>
 </a>
 </div>
